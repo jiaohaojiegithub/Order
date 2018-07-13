@@ -1,0 +1,185 @@
+﻿
+@{
+    ViewBag.Title = "管理员登录";
+    Layout = "~/Views/Shared/_LayoutOriginal.cshtml";
+}
+@section Head{
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: -ms-flexbox;
+            display: -webkit-box;
+            display: flex;
+            -ms-flex-align: center;
+            -ms-flex-pack: center;
+            -webkit-box-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            justify-content: center;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            background-color: #f5f5f5;
+        }
+
+        .form-signin {
+            width: 100%;
+            max-width: 330px;
+            padding: 15px;
+            margin: 0 auto;
+        }
+
+            .form-signin .checkbox {
+                font-weight: 400;
+            }
+
+            .form-signin .form-control {
+                position: relative;
+                box-sizing: border-box;
+                height: auto;
+                padding: 10px;
+                font-size: 16px;
+            }
+
+                .form-signin .form-control:focus {
+                    z-index: 2;
+                }
+
+            .form-signin input[type="text"] {
+                margin-bottom: -1px;
+                border-bottom-right-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+
+            .form-signin input[type="password"] {
+                margin-bottom: 10px;
+                border-top-left-radius: 0;
+                border-top-right-radius: 0;
+            }
+
+    </style>
+    <script>
+     
+    </script>
+}
+<div class="container text-center">
+
+    @*@using (Html.BeginForm("loginintext", "login",FormMethod.Post,new { @class = "form-signin", onsubmit = "return false" }))
+        {*@
+    <form class="form-signin" onsubmit="return false">
+        @*@Html.AntiForgeryToken()*@
+        <img class="mb-4" src="https://getbootstrap.com/assets/brand/bootstrap-solid.svg" alt="图标" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal">请登录</h1>
+        <label for="inputEmail" class="sr-only">用户名</label>
+        @*@Html.LabelFor(model=>model.UserName,htmlAttributes:new { @class = "sr-only" })*@
+        <input type="text" id="inputEmail" class="form-control" placeholder="用户名" maxlength="15" data-toggle="tooltip" title="用户名只能由数字,汉字,字母组成" data-placement="right" required autofocus>
+        @*@Html.EditorFor(model=>model.UserName,new { htmlAttributes=new { @class = "form-control" } , placeholder = "用户名", maxlength = "15", title = "用户名只能由数字,汉字,字母组成", required= "required", autofocus= "autofocus" })*@
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="密码" maxlength="18" data-toggle="tooltip" title="密码不能少于6位" data-placement="right" required>
+        <div class="checkbox mb-3">
+            <label>
+                <input type="checkbox" value="remember-me" checked> 记住我
+            </label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+        <p class="mt-5 mb-3 text-muted">&copy; 2017-2018</p>
+        @*}*@
+    </form>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        var stlink = false;
+        /*校验是否中文名称或字母数字组成 */
+        function isUsername(str) {
+            var regUsername = /^[A-Za-z0-9\u4e00-\u9fa5]+$/; /*定义验证表达式*/
+            return regUsername.test(str); /*定义验证表达式*/
+        };
+        /*校验密码*/
+        function isPassword(str) {
+            var regPassword = /^[\w]{6,18}$/;
+            return regPassword.test(str);
+        };
+        /*jQuery禁止输入空格键*/
+
+        $("#inputEmail").keypress(function (evt) {
+            var cc = (evt.charCode) ? evt.charCode : ((evt.which) ? evt.which : evt.keyCode);
+            if ($(this).val().length == 0) {
+                if (cc == 32)
+                    return false;
+            }
+        });
+        $('#inputPassword').keypress(function (event) {
+            var cc = (event.charCode) ? event.charCode : ((event.which) ? event.which : event.keyCode);
+            if (cc == 32)
+                return false;
+        });
+        //function jump() {
+        //    window.location.href = "http://blog.sina.com.cn/mleavs";
+        //};
+        //表单提交
+        $('button[type="submit"]').click(function () {
+            var username = $('input[type="text"]').val();
+            var password = $('input[type="password"]').val();
+            var state = false;
+            if (username != "" && password != "") {
+                if (!isUsername(username)) {
+                    $('input[type="text"]').addClass("border-warning");
+                    alert("用户名格式错误！");
+                    state = false;
+                } else {
+                    if (!isPassword(password)) {
+                        alert("密码格式错误！");
+                        state = false;
+                    }
+                    else {
+                        state = true;
+                    }
+                }
+            };
+            if (state) {
+
+                $.ajax({
+                    url: '/LoginOrRegister/LoginAdmin',
+                    type: 'post',
+                    async: true,
+                    data: {
+                        username: username,
+                        password: password
+                    },
+                    success: function (data) {
+                        if (data == 1) {
+                            stlink = true;
+                            setTimeout(tiaozhuan(), 100);
+                        }
+                        else {
+                            if (data == 0)
+                                alert("登录失败,用户名不存在");
+                            else if (data == 2)
+                                alert("登录失败，密码错误");
+                            else if (data == 3)
+                                alert("权限不足，请更改用户");
+                            else
+                                alert("用户已注销，请更改用户");
+                        }
+                    }
+                });
+            };
+
+        });
+        function tiaozhuan() {
+            if (stlink) {
+                window.open("/Admin/Index", "_self");
+            };
+        }
+    </script>
+}

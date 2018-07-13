@@ -1,0 +1,154 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+    Layout = null;
+}
+
+<style>
+    * {
+        padding: 0;
+        margin: 0
+    }
+
+    html {
+        overflow: hidden
+    }
+
+    body {
+        text-align: center
+    }
+
+    .codrops-demos {
+        font-size: 0.8em;
+        text-align: center;
+        position: absolute;
+        z-index: 99;
+        /*background-color: rgba(0,0,0,0);*/
+        width: 96%;
+        margin-top: 12%;
+    }
+
+        .codrops-demos h2, h6 {
+            color: #FFFFFF;
+        }
+
+        .codrops-demos div, input {
+            background-color: transparent
+        }
+</style>
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<div class="codrops-demos">
+    <div class="container col-xl-3">
+        <h2>登陆</h2>
+        <div class="card">
+            @*<div class="card-header">头部</div>*@
+            <div class="card-body">
+                <div class="form-label-group text-left">
+                    <input type="text" class="form-control" id="LoginSignUserName1" name="LoginSignUserName1" placeholder="用户名" data-toggle="tooltip" title="用户名只能由数字,汉字,字母组成" data-placement="right" required autofocus>
+                    <label for="LoginSignUserName1" class="text-dark">用户名</label>
+                </div>
+                <div class="form-label-group text-left">
+                    <input type="password" id="LoginSignPassword1" name="LoginSignPassword1" class="form-control" placeholder="密码" data-toggle="tooltip" title="密码不能少于6位" data-placement="right" required>
+                    <label for="LoginSignPassword1" class="text-dark">密码</label>
+                </div>
+                <input type="button" value="登录" id="LoginSignChecka" class="btn btn-lg btn-primary btn-block" />
+            </div>
+            <div class="card-footer text-right">
+                @*<a href="">注册</a>*@
+                <a href="/Test/OrdinaryRegister">注册</a>
+            </div>
+        </div>
+    </div>
+</div>
+<canvas id="canvas" style="background:#111"></canvas>
+
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/umd/popper.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<script type="text/javascript">
+
+    window.onload = function () {
+        //获取画布对象
+        var canvas = document.getElementById("canvas");
+        //获取画布的上下文
+        var context = canvas.getContext("2d");
+        //获取浏览器屏幕的宽度和高度
+        var W = window.innerWidth;
+        var H = window.innerHeight;
+        //设置canvas的宽度和高度
+        canvas.width = W;
+        canvas.height = H;
+        //每个文字的字体大小
+        var fontSize = 16;
+        //计算列
+        var colunms = Math.floor(W / fontSize);
+        //记录每列文字的y轴坐标
+        var drops = [];
+        //给每一个文字初始化一个起始点的位置
+        for (var i = 0; i < colunms; i++) {
+            drops.push(0);
+        }
+
+        //运动的文字
+        var str = "javascript html5 canvas";
+        //4:fillText(str,x,y);原理就是去更改y的坐标位置
+        //绘画的函数
+        function draw() {
+            context.fillStyle = "rgba(0,0,0,0.05)";
+            context.fillRect(0, 0, W, H);
+            //给字体设置样式
+            context.font = "700 " + fontSize + "px  微软雅黑";
+            //给字体添加颜色
+            context.fillStyle = "#00cc33";//可以rgb,hsl, 标准色，十六进制颜色
+            //写入画布中
+            for (var i = 0; i < colunms; i++) {
+                var index = Math.floor(Math.random() * str.length);
+                var x = i * fontSize;
+                var y = drops[i] * fontSize;
+                context.fillText(str[index], x, y);
+                //如果要改变时间，肯定就是改变每次他的起点
+                if (y >= canvas.height && Math.random() > 0.99) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        };
+
+        function randColor() {
+            var r = Math.floor(Math.random() * 256);
+            var g = Math.floor(Math.random() * 256);
+            var b = Math.floor(Math.random() * 256);
+            return "rgb(" + r + "," + g + "," + b + ")";
+        }
+
+        draw();
+        setInterval(draw, 30);
+    };
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+    $('input[type="button"][id="LoginSignChecka"]').click(function () {
+        $.ajax({
+            url: '/LoginOrRegister/LoginManagementOrdinary',
+            type: 'post',
+            data: {
+                UNM: $('input[id="LoginSignUserName1"]').val(),
+                PWD: $('input[id="LoginSignPassword1"]').val()
+            },
+            success: function (data) {
+                //alert("进入");
+                if (data == 1) {
+                    alert("登陆成功");
+                    window.open("/Blogs/Index", "_self");
+                }
+                else {
+                    alert("登陆失败");
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("登录失败：" + errorThrown);
+            }
+        });
+    });
+</script>
+

@@ -1,0 +1,49 @@
+﻿
+@{
+    ViewBag.Title = "Ordinary";
+    Layout = "~/Views/Shared/_LayoutManagementOrdinary.cshtml";
+}
+
+@section Head{
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+
+}
+<h1>测试后台-普通用户</h1>
+<li class="nav-item d-none d-sm-inline-block" style="margin-left:10px" id="Cheshi">
+    <h3><span class="badge badge-pill badge-important">信息<span class="fas fa-minus-circle" onclick="chese()"></span></span></h3>
+</li>
+<li class="nav-item d-none d-sm-inline-block" style="margin-left:10px" id="Cheshi1">
+    <h3><span class="badge badge-pill badge-dark ">信息<span class="fas fa-minus-circle" onclick=""></span></span></h3>
+</li>
+<li class="nav-item d-none d-sm-inline-block" style="margin-left:10px" id="Cheshi2">
+    <h3><span class="badge badge-pill badge-light">信息<span class="fas fa-minus-circle"></span></span></h3>
+</li>
+<li class="nav-item d-none d-sm-inline-block bg-black" style="margin-left:10px" id="Cheshi3">
+    <h3>
+        <span class="badge badge-pill badge-primary">
+            信息<span class="fas fa-minus-circle"></span>
+        </span>
+    </h3>
+</li>
+
+@section Scripts{
+    <script>
+        $('span[class="fas fa-minus-circle"]').click(function () {
+            alert("准备删除此标签吗");
+            //$(this).parent().parent().remove();
+            $(this).parent().parent().parent().remove();
+            //$(this).parent('h3').remove();
+            //alert($(this).parent());
+        });
+        $(document).ready(function () {
+            var Lable = '<li class="nav-item d-none d-sm-inline-block" style="margin-left:10px" id="Cheshi">' +
+                '<h3><span class="badge badge-pill badge-secondary">信息<span class="fas fa-minus-circle"></span></span></h3>' +
+                '</li>';
+            $("#ADDORDERLABLE").append(Lable);
+        });
+        function chese() {
+            alert("准备删除此标签吗");
+            $(this).remove();//.parent('span').parent('h3').parent('li').remove();
+        };
+    </script>
+}

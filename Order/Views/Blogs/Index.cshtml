@@ -1,0 +1,325 @@
+﻿
+@{
+    ViewBag.Title = "博客主页";
+    Layout = "~/Views/Shared/_LayoutOriginal.cshtml";
+}
+@section Head{
+    <link href="~/Content/TestCSS/carousel.css" rel="stylesheet" />
+    <link href="~/Content/TestCSS/blog.css" rel="stylesheet" />
+    <style>
+        body {
+            padding-bottom: 20px;
+        }
+
+        .navbar {
+            margin-bottom: 20px;
+        }
+        .state {
+            display: none;
+        }
+    </style>
+}
+
+<nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Blog主页面</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarsExample05">
+        <ul class="navbar-nav mr-auto" id="navTop">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">主页 <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">心情随笔</a>
+            </li>
+        </ul>
+        <div class="mr-lg-5">
+            <img class="my-2 rounded-circle" height="40" width="40" id="UserOrdinaryImg" src="~/Resource/Img/20180518030030100c8fc06cd-770e-49f1-b77b-cdc54d8a0d45.jpg" />
+            <input type="button" class="btn btn-dark" value="登录" id="SignIn" data-toggle="modal" data-target="#myModalLogin" />
+            <input type="button" class="btn btn-dark" value="注册" id="Login" data-toggle="modal" data-target="#myModal" />
+            <a href="/ManagementOrdinary/Index" class="btn btn-dark state" id="UserAdminName">用户名</a>
+        </div>
+
+        <form class="form-inline my-2 my-md-0">
+
+            <input class="form-control" type="text" placeholder="搜索">
+        </form>
+    </div>
+
+</nav>
+<main role="main" style="margin-top:20px">
+    <div class="container-fluid bg-light text-center bg-info" style="height:auto;margin-left:0px;margin-right:0px;padding-left:0px;padding-right:0px" id="Content">
+        <!--切换列表-->
+        <div id="myCarousel" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                <li data-target="#myCarousel" data-slide-to="1"></li>
+                <li data-target="#myCarousel" data-slide-to="2"></li>
+            </ol>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img class="first-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="First slide">
+                    <div class="container">
+                        <div class="carousel-caption text-left">
+                            <h1>MVC框架</h1>
+                            <p>MVC全名是Model View Controller，是模型(model)－视图(view)－控制器(controller)的缩写，一种软件设计典范，用一种业务逻辑、数据、界面显示分离的方法组织代码，将业务逻辑聚集到一个部件里面，在改进和个性化定制界面及用户交互的同时，不需要重新编写业务逻辑。MVC被独特的发展起来用于映射传统的输入、处理和输出功能在一个逻辑的图形化用户界面的结构中。</p>
+                            <p><a class="btn btn-lg btn-primary" href="#" role="button">链接跳转</a></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img class="second-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Second slide">
+                    <div class="container">
+                        <div class="carousel-caption">
+                            <h1>Microsoft SQL Server</h1>
+                            <p>Microsoft SQL Server 是一个全面的数据库平台，使用集成的商业智能 (BI)工具提供了企业级的数据管理。Microsoft SQL Server 数据库引擎为关系型数据和结构化数据提供了更安全可靠的存储功能，使您可以构建和管理用于业务的高可用和高性能的数据应用程序。</p>
+                            <p><a class="btn btn-lg btn-primary" href="https://baike.baidu.com/item/Microsoft%20SQL%20Server/2947866?fr=aladdin&fromid=245994&fromtitle=sql+server" role="button">详细介绍</a></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img class="third-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Third slide">
+                    <div class="container">
+                        <div class="carousel-caption text-right">
+                            <h1>ORM</h1>
+                            <p>对象关系映射（英语：(Object Relational Mapping，简称ORM，或O/RM，或O/R mapping），是一种程序技术，用于实现面向对象编程语言里不同类型系统的数据之间的转换 [1]  。从效果上说，它其实是创建了一个可在编程语言里使用的--“虚拟对象数据库”。</p>
+                            <p><a class="btn btn-lg btn-primary" href="https://baike.baidu.com/item/ORM/3583252?fr=aladdin" role="button">了解一下</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">上一页</span>
+            </a>
+            <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">下一页</span>
+            </a>
+        </div>
+        <!--切换列表END-->
+        <div class="row" style="margin-top:-60px;margin-bottom:0px">
+            <!--文章内容-->
+            <div class="col-md-8 blog-main" id="ArticleList">
+                
+            </div><!-- /.blog-main -->
+            <aside class="col-md-4 blog-sidebar">
+                <div class="p-3 mb-3 bg-light rounded" style="width:70%;margin-left:auto;margin-right:auto">
+                    <h4 class="font-italic">关于本站</h4>
+                    <p class="mb-0" style="text-indent:2em">本站为个人性质网站，进度看心情，有<strong>好建议</strong>可以提,<sup>虽然我不一定会改</sup>，这边为右边扩展栏目，放啥还没决定好</p>
+                </div>
+                <div class="p-3">
+                    <h4 class="font-italic">其他</h4>
+                    <ol class="list-unstyled mb-0">
+                        <li><a href="#">@DateTime.Now.ToUniversalTime()</a></li>
+                        <li><a href="#">@DateTime.Now.ToShortDateString()</a></li>
+                        <li><a href="#">@DateTime.Now.ToShortTimeString()</a></li>
+                        <li><a href="#">@DateTime.Now.ToLocalTime()</a></li>
+                        <li><a href="#">@DateTime.Now.ToFileTimeUtc()</a></li>
+                        <li><a href="#">October 2013</a></li>
+                        <li><a href="#">September 2013</a></li>
+                        <li><a href="#">August 2013</a></li>
+                        <li><a href="#">July 2013</a></li>
+                        <li><a href="#">June 2013</a></li>
+                        <li><a href="#">May 2013</a></li>
+                        <li><a href="#">April 2013</a></li>
+                    </ol>
+                </div>
+                <div class="p-3">
+                    <h4 class="font-italic">分享链接</h4>
+                    <ol class="list-unstyled">
+                        <li><a href="#">GitHub</a></li>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">Facebook</a></li>
+                    </ol>
+                </div>
+            </aside><!-- /.blog-sidebar -->
+        </div><!-- /.row -->
+        <!-- FOOTER -->
+        <footer class="blog-footer bg-dark text-white" style="margin-bottom:0px">
+            <div class="text-white text-center">
+                <div class="col-xl-4" style="float:left">
+                    <h6>网站联系人</h6>
+                    <hr style="width:200px;background-color:white;" />
+                    <a href="#">2351592225@qq.com</a><br />
+                    <a href="#">1442561408@qq.com</a>
+                </div>
+                <div class="col-xl-4" style="float:left">
+                    <h6>友情链接</h6>
+                    <hr style="width:200px" class="bg-white" />
+                    <a href="#">待定</a><br />
+                    <a href="#">待定</a>
+                </div>
+                <div class="col-xl-4" style="float:left">
+                    <h6>其他</h6>
+                    <hr style="width:200px" class="bg-white" />
+                    <a href="#">待定</a><br />
+                    <a href="#">待定</a>
+                </div>
+            </div>
+            <hr class="bg-white"/>
+            <div class="text-center">
+                &copy;个人网站|主体未定|<img src="~/Resource/Img/备案图标.png"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51018402000054" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="" style="float:left;" /><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">川公网安备 51018402000054号</p></a>
+            </div>
+        </footer>
+    </div>
+</main>
+
+@section Scripts{
+    <script>
+        //$("#Content").css("min-height", $(document).height());
+        $(document).ready(function () {
+            $("#UserAdminName").addClass('state');
+            $('#SignIn').removeClass('state');
+            $('#Login').removeClass('state');
+            //导航栏
+            $.ajax({
+                url: '/Forum/SelectForum',
+                type: 'post',
+                dataType: 'json',
+                success: function (data) {
+                    //alert(data[0].ForumName);
+                    $.each(data, function (i, val) {
+                        var html = '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="dropdown' + val.Forum_ID + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' + val.Forum_Name + '</a></li>';
+                        $("#navTop").append(html);
+                        Navinfo(val.Forum_ID);
+                        //alert(i + '\n' + val.Forum_Name);
+                    });
+                    //alert(data[0]);
+                    //$("#main").html(data);
+                    //$(".navbar-nav mr-auto").append(html);
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("加载失败：" + errorThrown);
+                }
+            });
+
+            if ('@ViewBag.stata' == 1) {
+                //alert("已登陆");
+                //$('#UserOrdinaryImg').attr('src', )
+                if ($('#SignIn').hasClass('state')) {
+                }
+                else {
+                    $('#SignIn').addClass('state');
+                }
+                if ($('#Login').hasClass('state')) {
+                }
+                else {
+                    $('#Login').addClass('state');
+                }
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '/Blogs/UserLoginImg',
+                    cache: false,
+                    dataType: 'json',
+                    success: function (data) {
+                        $.each(data, function (i, val) {
+                            //var html = '<option>' + val.Forum_Name + '</option>';
+                            $("#UserOrdinaryImg").attr("src", val.头像);
+                            $("#UserOrdinaryImg").attr("alt", val.用户名);
+                            $("#UserAdminName").text(val.用户名);
+                            $('#UserAdminName').attr('href', '/ManagementOrdinary/Index/' + val.ID);
+                            if ($('#UserAdminName').hasClass('state')) {
+                                $("#UserAdminName").removeClass('state');
+                            }
+                            else {
+                            }
+                           
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("加载失败：" + errorThrown);
+                    }
+                });
+            }
+            //加载文章
+            $("#ArticleList").empty();//移除所有文章
+            $("#ArticleList").append('<iframe id="contentIframe" onload="initIframeHeight(1350)" style="width:100%;height:100%;min-height:1350px;" scrolling="no" marginwidth="0" marginheight="0"  frameborder="0" src="/Article/Index/0"></iframe>');
+        });
+        //子菜单-下拉 
+        function Navinfo(x) {
+
+            $.ajax({
+                url: '/ArticleType/SelectArticleTypeList',
+                type: 'post',
+                data: {
+                    id: x
+                },
+                dataType: 'json',
+                //async: false,
+                success: function (data) {
+                    //alert(data[0] + "测试");//undefined
+                    var tset = data;
+                    //alert(data);
+                    var xn = "#dropdown" + x;
+                    if (tset != "") {
+                        //alert(data);
+                        var html = '<div class="dropdown-menu" aria-labelledby="dropdown' + x + '">';
+                        $.each(data, function (i, val) {
+			    var ATY = val.name.split("-");
+                            html = html + '<a class="dropdown-item" href="#">' + ATY[0] + '</a>';
+                            //html = html + '<a class="dropdown-item" href="#">' + val.name + '</a>';
+                        });
+                        html = html + '</div>';
+                        $(xn).append(html);
+                    } else {
+                        //alert("无子菜单");
+                        $(xn).parent().removeClass('dropdown');
+                        $(xn).removeClass('dropdown-toggle');
+                        //$(xn).attr({ "data-toggl": "", "aria-haspopup": "false", "aria-expanded": "" });
+                        //$(xn).attr("data-toggl", "")
+                        $(xn).removeAttr("data-toggl");//.removeAttr('aria-haspopup').removeAttr('aria-expanded');
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("加载失败：" + errorThrown);
+                }
+            })
+        };
+        //登陆
+        $('#SignIn').click(function () {
+            window.open("/Test/Login", "_self");
+        });
+        $('#Login').click(function () {
+            window.open("/Test/OrdinaryRegister", "_self");
+        });
+        //iframe高度自适应
+        /**
+ * iframe自适应高度，height为手动设置的最小高度
+ */
+        function initIframeHeight(height) {
+            var userAgent = navigator.userAgent;
+            var iframe = parent.document.getElementById("contentIframe");
+            var subdoc = iframe.contentDocument || iframe.contentWindow.document;
+            var subbody = subdoc.body;
+            var realHeight;
+            //谷歌浏览器特殊处理
+            if (userAgent.indexOf("Chrome") > -1) {
+                realHeight = subdoc.documentElement.scrollHeight;
+            }
+            else {
+                realHeight = subbody.scrollHeight;
+            }
+            if (realHeight < height) {
+                $(iframe).height(height);
+            }
+            else {
+                $(iframe).height(realHeight);
+            }
+        };
+        function reinitIframe() {
+            var iframe = document.getElementById("contentIframe");
+            try {
+                var bHeight = iframe.contentWindow.document.body.scrollHeight;
+                var dHeight = iframe.contentWindow.document.documentElement.scrollHeight;
+                var height = Math.max(bHeight, dHeight);
+                iframe.height = height;
+                console.log(height);
+            } catch (ex) { }
+        }
+        window.setInterval("reinitIframe()", 200);
+    </script>
+}

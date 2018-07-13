@@ -1,0 +1,346 @@
+﻿
+@{
+    ViewBag.Title = "OrdinaryRegister";
+    Layout = null;
+}
+<style>
+
+
+    html, body {
+        background: #ffffff;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        /*float:none;*/
+    }
+
+    body {
+        background: #060e1b;
+        overflow: hidden;
+    }
+
+    canvas {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+    }
+
+    /* Demo Buttons Style */
+    .codrops-demos {
+        font-size: 0.8em;
+        text-align: center;
+        position: absolute;
+        z-index: 99;
+        width: 100%;
+        padding-top: 15%;
+    }
+
+        .codrops-demos a {
+            display: inline-block;
+            margin: 0.35em 0.1em;
+            padding: 0.5em 1.2em;
+            outline: none;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            border-radius: 2px;
+            font-size: 110%;
+            border: 2px solid transparent;
+            font-family: helvetica,arial,sans-serif;
+            text-shadow: 0 0 0.2em #f87, 0 0 0.2em #66ccff;
+            color: #c8deff;
+        }
+
+            .codrops-demos a:hover,
+            .codrops-demos a.current-demo {
+                border-color: #383a3c;
+            }
+
+        .codrops-demos form, div, h3 {
+            background-color: transparent;
+            color: #ffffff;
+        }
+
+    .error {
+        font-weight: bold;
+        color: white !important;
+    }
+    /*p {
+        text-align: center;
+        padding: 24px;
+        margin: 0;
+        font-family: helvetica,arial,sans-serif;
+        color: #d1d1d1;
+        font-size: 80px;
+        font-weight: bold;
+    }
+
+    .p1 {
+        text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    }
+
+    .p2 {
+        text-shadow: 0 0 0.2em #f87, -0 -0 0.2em #f87;
+    }*/
+</style>
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<div class="codrops-demos text-center" id="zhucwe">
+
+    <form class="form-signin col-xl-3" style="margin-left:auto;margin-right:auto;" id="signupForm">
+        <h3>注册</h3>
+        @Html.AntiForgeryToken()
+        <div class="form-label-group text-left">
+            <input type="text" id="inputEmail" class="form-control" style="background-color:transparent;color:#ffffff" name="inputEmail" placeholder="用户名" data-toggle="tooltip" title="用户名" data-placement="right" required autofocus>
+            <label for="inputEmail" class="text-dark">用户名</label>
+        </div>
+        <div class="form-label-group text-left">
+            <input type="password" id="inputPassword" name="inputPassword" class="form-control" style="background-color:transparent;color:#ffffff" placeholder="密码" data-toggle="tooltip" title="密码" data-placement="right" required>
+            <label for="inputPassword" class="text-dark">密码</label>
+        </div>
+        <div class="form-label-group text-left">
+            <input type="password" id="inputPassword1" name="inputPassword1" class="form-control" style="background-color:transparent;color:#ffffff" placeholder="验证密码" data-toggle="tooltip" title="验证密码" data-placement="right" required>
+            <label for="inputPassword1" class="text-dark">验证密码</label>
+        </div>
+
+        <button class="btn btn-lg btn-primary btn-block" style="background-color:transparent;color:#ffffff" type="submit">注册</button>
+        <div class="text-left">
+            @*<a href="#">登录</a>*@
+            <a href="/Test/Login">登录</a>
+        </div>
+
+    </form>
+</div>
+<canvas id="canvas" style="position:absolute;top:0px;left:0px;z-index:1;"></canvas>
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/umd/popper.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<script src="~/Scripts/jquery.validate.js"></script>
+<script src="~/Scripts/messages_zh.js"></script>
+<script>
+    "use strict";
+
+    var canvas = document.getElementById('canvas'),
+        ctx = canvas.getContext('2d'),
+        w = canvas.width = window.innerWidth,
+        h = canvas.height = window.innerHeight,
+
+        hue = 217,
+        stars = [],
+        count = 0,
+        maxStars = 1200;
+
+    var canvas2 = document.createElement('canvas'),
+        ctx2 = canvas2.getContext('2d');
+    canvas2.width = 100;
+    canvas2.height = 100;
+    var half = canvas2.width / 2,
+        gradient2 = ctx2.createRadialGradient(half, half, 0, half, half, half);
+    gradient2.addColorStop(0.025, '#fff');
+    gradient2.addColorStop(0.1, 'hsl(' + hue + ', 61%, 33%)');
+    gradient2.addColorStop(0.25, 'hsl(' + hue + ', 64%, 6%)');
+    gradient2.addColorStop(1, 'transparent');
+
+    ctx2.fillStyle = gradient2;
+    ctx2.beginPath();
+    ctx2.arc(half, half, half, 0, Math.PI * 2);
+    ctx2.fill();
+
+    // End cache
+
+    function random(min, max) {
+        if (arguments.length < 2) {
+            max = min;
+            min = 0;
+        }
+
+        if (min > max) {
+            var hold = max;
+            max = min;
+            min = hold;
+        }
+
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function maxOrbit(x, y) {
+        var max = Math.max(x, y),
+            diameter = Math.round(Math.sqrt(max * max + max * max));
+        return diameter / 2;
+    }
+
+    var Star = function () {
+
+        this.orbitRadius = random(maxOrbit(w, h));
+        this.radius = random(60, this.orbitRadius) / 12;
+        this.orbitX = w / 2;
+        this.orbitY = h / 2;
+        this.timePassed = random(0, maxStars);
+        this.speed = random(this.orbitRadius) / 900000;
+        this.alpha = random(2, 10) / 10;
+
+        count++;
+        stars[count] = this;
+    }
+
+    Star.prototype.draw = function () {
+        var x = Math.sin(this.timePassed) * this.orbitRadius + this.orbitX,
+            y = Math.cos(this.timePassed) * this.orbitRadius + this.orbitY,
+            twinkle = random(10);
+
+        if (twinkle === 1 && this.alpha > 0) {
+            this.alpha -= 0.05;
+        } else if (twinkle === 2 && this.alpha < 1) {
+            this.alpha += 0.05;
+        }
+
+        ctx.globalAlpha = this.alpha;
+        ctx.drawImage(canvas2, x - this.radius / 2, y - this.radius / 2, this.radius, this.radius);
+        this.timePassed += this.speed;
+    }
+
+    for (var i = 0; i < maxStars; i++) {
+        new Star();
+    }
+
+    function animation() {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 0.8;
+        ctx.fillStyle = 'hsla(' + hue + ', 64%, 6%, 1)';
+        ctx.fillRect(0, 0, w, h)
+
+        ctx.globalCompositeOperation = 'lighter';
+        for (var i = 1, l = stars.length; i < l; i++) {
+            stars[i].draw();
+        };
+
+        window.requestAnimationFrame(animation);
+    }
+
+    animation();
+
+
+
+    //================================
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+    $(document).ready(function () {
+        //var ksbody = document.documentElement.clientWidth;// $("#bj").width();//document.body.offsetWidth;
+        //if (ksbody >= 1200) {
+        //    var offsetw = (ksbody - $("#zhucwe").width()) / 2;//((ksbody / 12) * 9) / 2;
+        //    $("#zhucwe").css("margin-left", offsetw);
+        //}
+        //$('body').addClass("text-center");
+        //验证
+        $("#signupForm").validate({
+            rules: {
+                inputEmail: {
+                    required: true,
+                    minlength: 2,
+                    username: true
+                    //email: true
+
+                },// "required",
+                inputPassword: {
+                    required: true,
+                    rangelength: [6, 18],
+                    Password: true
+                },//"required",
+                inputPassword1: {
+                    required: true,
+                    rangelength: [6, 18],
+                    Password: true,
+                    equalTo: "#inputPassword"
+                }
+            },
+            messages: {
+                //inputEmail: {
+                //    required: "请输入",
+                //    minlength: 2,
+                //    email: true
+                //}
+                inputPassword1: {
+                    required: "请再次输入密码",
+                    rangelength: "密码由长度6-18位的大小写字母，数字，下划线组成",
+                    equalTo: "两次密码不一致"
+                }
+            },
+            highlight: function (element, errorClass, validClass) { // element出错时触发
+                $(element).siblings(".text-dark").text("");//.addClass("text-hide");
+            },
+            unhighlight: function (element, errorClass, validClass) {// element通过验证时触发
+            }
+
+        })
+    });
+    //验证规则
+    $.validator.addMethod("Password", function (value, element) {
+        var v_regex = /^[\w]{6,18}$/;
+        value = "" + value;
+        if (value) {
+            if (!v_regex.test(value)) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return null;
+        }
+        //return this.optional(element) || /^[\w]{6,18}$/
+        //i.test(value);
+    }, "请输入正确的密码");//添加密码规则
+    $.validator.addMethod("username", function (value, element) {
+        return this.optional(element) || /^[A-Za-z0-9\u4e00-\u9fa5]+$/i.test(value);
+    }, "用户名只能由数字,汉字,字母组成");//添加用户名验证规则
+    //获取防伪标记
+    @*var token = $('@Html.AntiForgeryToken()').val();
+    var headers = {};
+    //防伪标记放入headers
+    //也可以将防伪标记放入data
+    headers["__RequestVerificationToken"] = token;*@
+        //获取防伪标记
+        var token = $('input[name=__RequestVerificationToken]').val();
+    var headers = {};
+    headers["__RequestVerificationToken"] = token;
+    $.validator.setDefaults({
+        submitHandler: function () {
+            //alert("进入提交页面，请编写ajax提交表单");
+            $.ajax({
+                type: 'POST',
+                url: '/LoginOrRegister/RegisterManagementOrdinary',
+                cache: false,
+                headers: headers,
+                data: {
+                    UserName: $('input[id="inputEmail"]').val(),
+                    PassWord: $('input[id="inputPassword"]').val()
+                },
+                success: function (data) {
+                    alert(data);
+                    if (data == 10) {
+                        alert("注册成功");
+                        window.open("/Test/Login", "_self");
+                    } else {
+                        alert("注册失败");
+                    }
+
+                },
+                error: function () {
+                    alert("Error");
+                    // $("#Login").show();
+                    //window.open("/Shared/Error", "_self");
+                }
+
+            });
+            //  $("#btnClose").click();
+            $("#signupForm").children('div').children('input[type="password"]').val("");
+            $("#signupForm").children('div').children('input[type="text"]').val("");
+
+
+        }
+    });
+
+
+    //=================================
+</script>
+

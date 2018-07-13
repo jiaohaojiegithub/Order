@@ -1,0 +1,267 @@
+﻿
+<script src="~/ueditor/ueditor.config.js"></script>
+<script src="~/ueditor/ueditor.all.js"></script>
+<link href="~/ueditor/themes/iframe.css" rel="stylesheet" />
+<script src="~/ueditor/lang/zh-cn/zh-cn.js"></script>
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<link href="~/Content/bootstrap-fileinput/css/fileinput.css" media="all" rel="stylesheet" />
+<script src="~/Content/bootstrap-fileinput/themes/fa/theme.js"></script>
+@using (Html.BeginForm("ArticleADD", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+<div class="card-body">
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text">标题</span>
+        </div>
+        <input type="text" class="form-control" placeholder="标题" id="Article_Title" name="Article_Title" required>
+    </div>
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text">描述</span>
+        </div>
+        <input type="text" class="form-control" placeholder="描述" id="Article_Abstract" name="Article_Abstract" required>
+    </div>
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text">封面</span>
+        </div>
+        <input id="uploadfile" type="file" class="file" name="uploadfile" placeholder="请选择上传图片" />
+    </div>
+    <div class="input-group mb-3 hidden">
+        <div class="input-group-prepend">
+            <span class="input-group-text">类别</span>
+        </div>
+        @*<input type="text" class="form-control" placeholder="数据类别名" id="inputForum_Name" name="inputArticleType_Name">*@
+        <select class="form-control" id="inputForum_Name" name="inputForum_Name" required>
+        </select>
+    </div>
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text">分类</span>
+        </div>
+        <select class="form-control" id="ArticleType_ID" name="ArticleType_ID" required>
+            @*<option>C#</option>
+            <option>SQL Server</option>
+            <option>JAVA</option>*@
+        </select>
+        <div class="input-group-append">
+            <button class="input-group-text"><i class="fas fa-plus-square"></i></button>
+            @*<span class="input-group-text"><i class="fas fa-plus-square"></i></span>*@
+        </div>
+    </div>
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text">标签</span>
+        </div>
+        @*<button class="btn btn-info" name="biaoqian">
+                标签
+                <i class="fas fa-minus"></i>
+            </button>*@
+        <input type="text" value="标签" class="btn btn-info" name="biaoqian1" id="biaoqian1" />
+        <input type="text" value="标签" class="btn btn-info" name="biaoqian2" id="biaoqian2" />
+        <input type="text" value="标签" class="btn btn-info" name="biaoqian3" id="biaoqian3" />
+        <input type="text" value="标签" class="btn btn-info" name="biaoqian4" id="biaoqian4" />
+        <input type="text" value="标签" class="btn btn-info" name="biaoqian5" id="biaoqian5" />
+
+
+        <button class="input-group-text" data-toggle="model" data-target="#myModal"><i class="fas fa-plus-circle"></i></button>
+    </div>
+    <textarea id="editor" name="editor"></textarea>
+    <div class="card-footer text-center">
+        <button type="submit" class="btn btn-primary">提交</button>
+    </div>
+</div>
+    <!-- 模态框 -->
+   
+}
+
+<script src="~/Scripts/bootstrap.js"></script>
+
+<script src="~/Scripts/fileinput.js"></script>
+<script src="~/Content/bootstrap-fileinput/themes/explorer-fas/theme.js"></script>
+<script src="~/Scripts/locales/zh.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax({
+            type: 'POST',
+            url: '/Forum/SelectForum',
+            cache: false,
+            dataType: 'json',
+            success: function (data) {
+                $.each(data, function (i, val) {
+                    var html = '<option>' + val.Forum_Name + '</option>';
+                    $("#inputForum_Name").append(html);
+                });
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("加载失败：" + errorThrown);
+            }
+        });
+        $.ajax({
+            type: 'POST',
+            url: '/ArticleType/SelectArticleType',
+            cache: false,
+            dataType: 'json',
+            success: function (data) {
+                $.each(data, function (i, val) {
+                    var arr = val.ArticleType_Name.split("-");
+                    var html = '<option>' + arr[0] + '</option>';
+                    $("#ArticleType_ID").append(html);
+                });
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("加载失败：" + errorThrown);
+            }
+        });
+    });
+    var ue = UE.getEditor('editor', {
+        toolbars: [[
+            'source', '|', 'undo', 'redo', '|',
+            'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
+            'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
+            'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
+            'directionalityltr', 'directionalityrtl', 'indent', '|',
+            'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
+            'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|',
+            'simpleupload', 'insertimage', 'emotion', 'scrawl', 'insertvideo', 'music', 'attachment', 'map', 'insertframe', 'insertcode', 'pagebreak', 'template', 'background', '|',
+            'horizontal', 'date', 'time', 'spechars', 'snapscreen', 'wordimage', '|',
+            'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
+            'preview', 'searchreplace', 'drafts', 'help'
+        ]],
+        autoHeightEnabled: true,
+        autoFloatEnabled: true,
+        autoClearinitialContent: true,
+        //UEDITOR_HOME_URL: '/ueditor/',
+        //iframeCssUrl: '/ueditor/themes/iframe.css',//样式路径
+        minFrameHeight: 500,//最小高度
+        //initialFrameWidth: 800
+    });
+    $("#uploadfile").fileinput({
+        language: 'zh', //设置语言
+        showCaption: true,//是否显示被选文件的简介
+        showBrowse: true,//是否显示浏览按钮
+        showPreview: true,//是否显示预览区域
+        showRemove: true,//是否显示移除按钮
+        showUpload: false,//是否显示上传按钮
+        showCancel: true,//是否显示取消按钮
+        showClose: true,//是否显示关闭按钮
+        showUploadedThumbs: true,
+        browseOnZoneClick: false,
+        autoReplace: true,//是否自动替换当前图片，设置为true时，再次选择文件， 会将当前的文件替换掉。
+        previewZoomButtonIcons: {//预览图标按钮
+            prev: '<i class="fas fa-caret-left"></i>',//glyphicon glyphicon-triangle-left
+            next: '<i class="fas fa-caret-right"></i>',//glyphicon glyphicon-triangle-right
+            toggleheader: '<i class="fas fa-arrows-alt-v"></i>',//glyphicon glyphicon-resize-vertical
+            fullscreen: '<i class="fas fa-arrows-alt"></i>',//glyphicon glyphicon-fullscreen
+            borderless: '<i class="far fa-window-maximize"></i>',//glyphicon glyphicon-resize-full
+            close: '<i class="fas fa-times"></i>'//glyphicon glyphicon-remove
+        },
+        previewZoomButtonClasses: {
+            prev: 'btn btn-navigate',
+            next: 'btn btn-navigate',
+            toggleheader: 'btn btn-sm btn-kv btn-default btn-outline-secondary',
+            fullscreen: 'btn btn-sm btn-kv btn-default btn-outline-secondary',
+            borderless: 'btn btn-sm btn-kv btn-default btn-outline-secondary',
+            close: 'btn btn-sm btn-kv btn-default btn-outline-secondary'
+        },
+
+        previewFileIcon: "<iclass='fas fa-king'></i>",
+        allowedFileExtensions: ['jpg', 'gif', 'png'],//接收的文件后缀
+        previewFileIcon: '<i class="fas fa-file"></i>',//glyphicon glyphicon-file
+        previewFileIconClass: 'file-other-icon',
+        previewFileIconSettings: {},
+        previewFileExtSettings: {},
+        buttonLabelClass: 'hidden-xs',
+        browseIcon: '<i class="fas fa-folder-open"></i>&nbsp;',//glyphicon glyphicon-folder-open
+        browseClass: 'btn btn-primary',
+        removeIcon: '<i class="fas fa-trash-alt"></i>',//glyphicon glyphicon-trash
+        removeClass: 'btn btn-default btn-secondary',
+        cancelIcon: '<i class="fas fa-ban"></i>',//glyphicon glyphicon-ban-circle
+        cancelClass: 'btn btn-default btn-secondary',
+        uploadIcon: '<i class="fas fa-upload"></i>',//glyphicon glyphicon-upload
+        uploadClass: 'btn btn-default btn-secondary',
+        //uploadUrl: "UploadSerivcePhoto",//上传的地址
+        uploadAsync: true,
+        //uploadExtraData:{"id": 1, "fileName":'123.mp3'},//上传文件时额外传递的参数设置
+        zoomModalHeight: 480,
+        minImageWidth: null,
+        minImageHeight: null,
+        maxImageWidth: null,
+        maxImageHeight: null,
+        //resizeImage: false,
+        //resizePreference: 'width',
+        //resizeQuality: 0.92,
+        //resizeDefaultImageType: 'image/jpeg',
+        resizeIfSizeMoreThan: 0, // in KB
+        minFileSize: 0,
+        maxFileSize: 0,
+        maxFilePreviewSize: 25600, // 25 MB
+        minFileCount: 0,
+        maxFileCount: 1,//表示允许同时上传的最大文件个数
+        validateInitialCount: false,
+        //msgValidationErrorClass: 'text-danger',
+        //msgValidationErrorIcon: '<i class="fas fa-exclamation-circle"></i> ',//glyphicon glyphicon-exclamation-sign
+        //msgErrorClass: 'file-error-message',
+        //progressThumbClass: "progress-bar bg-success progress-bar-success progress-bar-striped active",
+        //progressClass: "progress-bar bg-success progress-bar-success progress-bar-striped active",
+        //progressCompleteClass: "progress-bar bg-success progress-bar-success",
+        //progressErrorClass: "progress-bar bg-danger progress-bar-danger",
+        //progressUploadThreshold: 99,
+        //previewFileType: 'image',
+        //elCaptionContainer: null,
+        //elCaptionText: null,
+        //elPreviewContainer: null,
+        //elPreviewImage: null,
+        //elPreviewStatus: null,
+        //elErrorContainer: null,
+        //errorCloseButton: $h.closeButton('kv-error-close'),
+        //slugCallback: null,
+        //dropZoneEnabled: true,
+        //dropZoneTitleClass: 'file-drop-zone-title',
+        //otherActionButtons: '',
+        //textEncoding: 'UTF-8',
+        //ajaxSettings: {},
+        //ajaxDeleteSettings: {},
+        //showAjaxErrorDetails: true,
+        //mergeAjaxCallbacks: false,
+        //mergeAjaxDeleteCallbacks: false,
+        //retryErrorUploads: true,
+        //reversePreviewOrder: false,
+        fileActionSettings: {
+            showRemove: true,
+            showUpload: true,
+            showDownload: true,
+            showZoom: true,
+            showDrag: true,
+            removeIcon: '<i class="fas fa-trash-alt"></i>',//glyphicon glyphicon-trash
+            removeClass: 'btn btn-sm btn-kv btn-default btn-outline-secondary',
+            removeErrorClass: 'btn btn-sm btn-kv btn-danger',
+            removeTitle: '移除文件',
+            uploadIcon: '<i class="fas fa-upload"></i>',//glyphicon glyphicon-upload
+            uploadClass: 'btn btn-sm btn-kv btn-default btn-outline-secondary',
+            uploadTitle: '上传文件',
+            uploadRetryIcon: '<i class="fas fa-redo-alt"></i>',//glyphicon glyphicon-repeat
+            uploadRetryTitle: '重新上传',
+            downloadIcon: '<i class="fas fa-download"></i>',//glyphicon glyphicon-download
+            downloadClass: 'btn btn-sm btn-kv btn-default btn-outline-secondary',
+            downloadTitle: '下载文件',
+            zoomIcon: '<i class="fas fa-search-plus"></i>',//glyphicon glyphicon-zoom-in
+            zoomClass: 'btn btn-sm btn-kv btn-default btn-outline-secondary',
+            zoomTitle: '详细视图',
+            dragIcon: '<i class="fas fa-expand-arrows-alt"></i>',//glyphicon glyphicon-move
+            dragClass: 'text-info',
+            dragTitle: '移动 / 重新排列',
+            dragSettings: {},
+            indicatorNew: '<i class="fas fa-plus-circle text-warning"></i>',//glyphicon glyphicon-plus-sign
+            indicatorSuccess: '<i class="fas fa-check-circle text-success"></i>',//glyphicon glyphicon-ok-sign
+            indicatorError: '<i class="fas fa-exclamation-circle text-danger"></i>',//glyphicon glyphicon-exclamation-sign
+            indicatorLoading: '<i class="fas fa-hourglass text-muted"></i>',//glyphicon glyphicon-hourglass
+            indicatorNewTitle: '不能再次上传',
+            indicatorSuccessTitle: '上传成功',
+            indicatorErrorTitle: '上传失败',
+            indicatorLoadingTitle: '上传中 ...'
+        }
+    });
+   
+</script>

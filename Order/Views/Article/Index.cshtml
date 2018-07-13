@@ -1,0 +1,383 @@
+﻿@*@model IEnumerable<Order.Models.DBMYBLOGClass.ArticleType>*@
+@{
+    ViewBag.Title = "文章";
+    Layout = "~/Views/Shared/_LayoutOriginal.cshtml";
+}
+@section Head{
+    <style>
+        .state {
+            display:none;
+        }
+    </style>
+}
+
+@*//foreach (var i in item)
+    //{
+    //   @MvcHtmlString.Create(i)
+    // }*@
+@*<p>@item.文章描述</p>
+    <p>@item.文章内容</p>
+    <p>@item.文章封面</p>
+    <p>@item.创建时间</p>
+    <p>@item.文章标签</p>
+    <p>@item.文章类型</p>*@
+
+
+@*<p>@item.文章标题</p>*@
+@*<p>@item.文章内容</p>
+    <p>@item.文章封面</p>
+    <p>@item.创建时间</p>
+    <p>@item.文章标签</p>
+    <p>@item.文章类型</p>*@
+<input type="tel" id="ArticleType_NameState" value="@ViewBag.state" hidden />
+@*<h3 class="pb-3 mb-4 font-italic border-bottom" id="TitieInfo">*@
+@if (@ViewBag.state == "")
+{
+    //<a href="#" class="disabled">所有文章</a>
+
+    <h3 class="pb-3 mb-4 font-italic border-bottom">所有文章</h3>
+}
+else
+{
+    //<a href="#" class="disabled">分类-@ViewBag.state</a>
+    <h3 class="pb-3 mb-4 font-italic border-bottom">分类-@ViewBag.state</h3>
+}
+
+@*</h3>*@
+<div id="navTop" class="bg-light">
+    @*@for (var i=0;i<20;i++) {
+        <div >
+            <h2 class="">文章标题</h2>
+            <div style="width:100%;height:auto">
+                <p class="float-left" style="width:50%">创建日期:@DateTime.Now</p>
+                <p class="float-right text-right" style="width:50%"><a href="#">作者</a></p>
+            </div>
+                <p>文章简介文章简介文章简介文章简介文章简介文章简介文章简介文章简介文章简介文章简介文章简介文章简介</p>
+            <a class="float-right" style="margin-top:-20px" href="#">阅读文章</a>
+            <hr>
+        </div>
+        }*@
+
+</div>
+
+<div id="NavPage" class="fixed-bottom">
+    
+</div>
+@section Scripts{
+    <script>
+        @*var a=@ViewBag.state;*@
+//初始定义
+        var PageHtmlH = '<ul class="pagination float-right"><li class="page-item disabled" id="Previous"><a class="page-link" href="#">上一页</a></li>';
+        var PageHtmlC = '<li class="page-item active" id="N_1"><a class="page-link" href="#">1</a></li>';
+        var PageHtmlE = '<li class="page-item" id="Next"><a class="page-link" href="#">下一页</a></li></ul>';
+        var Location = 1;//定位
+        var Count = 0;//总记录数
+        var limtNum = 8;
+        $(document).ready(function () {
+           // alert($("#ArticleType_NameState").val());
+            $('body').addClass("bg-light");
+            //导航栏
+            $.ajax({
+                url: '/Article/ArticleInfo',
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    ArticleType_Name: $("#ArticleType_NameState").val(),
+                    limit: limtNum,//每页分页量
+                    offset: 0//偏移量
+                },
+                success: function (data) {
+                    //alert(data[0].ForumName);
+                    Count = data.total / limtNum;
+                    if (data.total % limtNum > 0) {
+                        Count += 1;
+                    } else {
+
+                    };
+                    $.each(data.rows, function (i, val) {
+                        //var html = '<div><h2>' + val.文章标题 + '</h2><div style="width:100%;height:auto"><p class="float-left" style="width:50%">创建日期:' + val.创建时间 + '</p><p class="float-right text-right" style="width:50%"><a href="#">作者:' + val.文章作者 + '</a></p></div><p>' + 文章描述 + '</p><a class="float-right" style="margin-top:-20px" href="/Article/ArticleInfo_ID/' + val.ID + '">阅读文章</a><hr></div>';//val.文章描述+'<hr>'+ val.文章内容;
+                        var html = '<div>' +
+                            '<h2>' + val.文章标题 + '</h2>' +
+                            '<div style="width:100%;height:auto">' +
+                            '<p class="float-left" style="width:50%">创建日期:' + val.创建时间 + '</p>' +
+                            '<p class="float-right text-right" style="width:50%">作者:<a href="#">' + val.文章作者 + '</a></p>' +
+                            '</div>' +
+                            '<p>' + val.文章描述 + '</p>' +
+                            '<a class="float-right" style="margin-top:-20px" href="/Article/ArticleInfo_ID/' + val.ID + '" target="view_window">阅读文章</a>' +
+                            '<hr>' +
+                            '</div>';
+                        $("#navTop").append(html);
+                        //alert(val.文章描述);
+                    });
+                    //alert(data[0]);
+                    //$("#main").html(data);
+                    //$(".navbar-nav mr-auto").append(html);
+                    PageHtmlC += '<li class="page-item state" id="NHead"><a class="page-link" href="#">...</a></li>';
+                    for (var i = 2; i <= Count; i++) {
+                        if (Count > 7) {
+                            if (i < 6 || i == Count) {
+                                PageHtmlC += '<li class="page-item" id="N_' + i + '"><a class="page-link" href="#">' + i + '</a></li>';
+                            } else {
+                                PageHtmlC += '<li class="page-item state" id="N_' + i + '"><a class="page-link" href="#">' + i + '</a></li>';
+                                if (i == Count - 1) {
+                                    PageHtmlC += '<li class="page-item" id="NEnd"><a class="page-link" href="#">...</a></li>';
+                                }
+                            }
+                        } else {
+                            PageHtmlC += '<li class="page-item" id="N_' + i + '"><a class="page-link" href="#">' + i + '</a></li>';
+                        }
+                    };
+                    $('#NavPage').empty();
+                    $('#NavPage').append(PageHtmlH + PageHtmlC + PageHtmlE);
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("加载失败：" + errorThrown);
+                }
+            });
+            //加载文章
+            //$("#ArticleList").empty();//移除所有文章
+            //$("#ArticleList").load("");
+//添加分页栏
+ //PageHtmlC += '<li class="page-item state" id="NHead"><a class="page-link" href="#">...</a></li>';
+ //           for (var i = 2; i <= Count; i++) {     
+ //               if (Count > 7) {
+ //                   if (i < 6 || i == Count) {
+ //                       PageHtmlC += '<li class="page-item" id="N_' + i + '"><a class="page-link" href="#">' + i + '</a></li>';
+ //                   } else {
+ //                       PageHtmlC += '<li class="page-item state" id="N_' + i + '"><a class="page-link" href="#">' + i + '</a></li>';
+ //                       if (i == Count - 1) {
+ //                           PageHtmlC += '<li class="page-item" id="NEnd"><a class="page-link" href="#">...</a></li>';
+ //                       }
+ //                   }
+ //               } else {
+ //                   PageHtmlC += '<li class="page-item" id="N_' + i + '"><a class="page-link" href="#">' + i + '</a></li>';
+ //               }
+ //           };
+ //           $('#NavPage').empty();
+ //           $('#NavPage').append(PageHtmlH + PageHtmlC + PageHtmlE);
+            
+        });
+//分页事件
+        function IFrameResize() {
+            alert($(document.body).outerWidth(true));
+            alert(this.document.body.scrollHeight); //弹出当前页面的高度
+            var obj = parent.document.getElementById("contentIframe"); //取得父页面IFrame对象
+            alert(obj.height); //弹出父页面中IFrame中设置的高度
+            obj.height = $(document.body).outerWidth(true);// this.document.body.scrollHeight; //调整父页面中IFrame的高度为此页面的高度
+        };
+        function PageNext() {
+            $.ajax({
+                url: '/Article/ArticleInfo',
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    ArticleType_Name: $("#ArticleType_NameState").val(),
+                    limit: limtNum,//每页分页量
+                    offset: limtNum * (Location - 1)//偏移量
+                },
+                success: function (data) {
+                    //alert(data.total);
+                    Count = data.total / limtNum;
+                    if (data.total % limtNum > 0) {
+                        Count += 1;
+                    } else {
+
+                    };
+                    $("#navTop").empty();
+                    $.each(data.rows, function (i, val) {
+                        //var html = '<div><h2>' + val.文章标题 + '</h2><div style="width:100%;height:auto"><p class="float-left" style="width:50%">创建日期:' + val.创建时间 + '</p><p class="float-right text-right" style="width:50%"><a href="#">作者:' + val.文章作者 + '</a></p></div><p>' + 文章描述 + '</p><a class="float-right" style="margin-top:-20px" href="/Article/ArticleInfo_ID/' + val.ID + '">阅读文章</a><hr></div>';//val.文章描述+'<hr>'+ val.文章内容;
+                        var html = '<div>' +
+                            '<h2>' + val.文章标题 + '</h2>' +
+                            '<div style="width:100%;height:auto">' +
+                            '<p class="float-left" style="width:50%">创建日期:' + val.创建时间 + '</p>' +
+                            '<p class="float-right text-right" style="width:50%">作者:<a href="#">' + val.文章作者 + '</a></p>' +
+                            '</div>' +
+                            '<p>' + val.文章描述 + '</p>' +
+                            '<a class="float-right" style="margin-top:-20px" href="/Article/ArticleInfo_ID/' + val.ID + '" target="view_window">阅读文章</a>' +
+                            '<hr>' +
+                            '</div>';
+                        $("#navTop").append(html);
+                        //alert(val.文章描述);
+                    });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("加载失败：" + errorThrown);
+                }
+            });
+        };
+        $(document).on('click', '#Previous', function () {
+            //上一页
+            CheckSite();
+            if ($(this).hasClass('disabled')) {
+                alert('已经是第一页');
+            } else {
+                //alert('上一页');
+                Location = Number($('li[class="page-item active"]').attr('id').split('_')[1]) - 1;
+                $('li[class="page-item active"]').removeClass('active');
+                if (Location >= 5 && Location <= Count - 5) {
+                    Change(Location);
+                } else if (Location < 5) {
+                    for (var x = 6; x < Count; x++) {
+                        if ($('#N_' + x).hasClass('state')) {
+                            //$('#N_' + x).removeClass('state');
+                        } else {
+                            $('#N_' + x).addClass('state');
+                        }
+                    };
+                    for (var x = 1; x < 6; x++) {
+                        if ($('#N_' + x).hasClass('state')) {
+                            $('#N_' + x).removeClass('state');
+                        } else {
+                            //$('#N_' + x).addClass('state');
+                        }
+                    };
+                    $('#NHead').addClass('state');
+                    $('#NEnd').removeClass('state');
+                } else if (Location > Count - 5) {
+                    for (var x = 0; x < 6; x++) {
+                        var xh = Count - 5 + x;
+                        if ($('#N_' + xh).hasClass('state')) {
+                            $('#N_' + xh).removeClass('state');
+                        } else {
+                            //$('#N_' + x).addClass('state');
+                        }
+                    };
+                    for (var x = 2; x < Count - 5; x++) {
+                        if ($('#N_' + x).hasClass('state')) {
+                            //$('#N_' + x).removeClass('state');
+                        } else {
+                            $('#N_' + x).addClass('state');
+                        }
+                    };
+                    $('#NHead').removeClass('state');
+                    $('#NEnd').addClass('state');
+                };
+                $('#N_' + Location).addClass('active');
+                PageNext();
+            }
+
+        });
+        $(document).on('click', '#Next', function () {
+            //下一页
+            CheckSite();
+            if ($(this).hasClass('disabled')) {
+                alert('已经是最后一页');
+            } else {
+                // alert('下一页');
+                Location = Number($('li[class="page-item active"]').attr('id').split('_')[1]) + 1;
+                $('li[class="page-item active"]').removeClass('active');
+                $('#N_' + Location).removeClass('state');
+                if (Location >= 5 && Location <= Count - 5) {
+                    Change(Location);
+                } else if (Location < 5) {
+                    for (var x = 6; x < Count; x++) {
+                        if ($('#N_' + x).hasClass('state')) {
+                            //$('#N_' + x).removeClass('state');
+                        } else {
+                            $('#N_' + x).addClass('state');
+                        }
+                    };
+                    for (var x = 1; x < 6; x++) {
+                        if ($('#N_' + x).hasClass('state')) {
+                            $('#N_' + x).removeClass('state');
+                        } else {
+                            //$('#N_' + x).addClass('state');
+                        }
+                    };
+                    $('#NHead').addClass('state');
+                    $('#NEnd').removeClass('state');
+                } else if (Location > Count - 5) {
+                    for (var x = 0; x < 6; x++) {
+                        var xh = Count - 5 + x;
+                        if ($('#N_' + xh).hasClass('state')) {
+                            $('#N_' + xh).removeClass('state');
+                        } else {
+                            //$('#N_' + x).addClass('state');
+                        }
+                    };
+                    for (var x = 2; x < Count - 5; x++) {
+                        if ($('#N_' + x).hasClass('state')) {
+                            //$('#N_' + x).removeClass('state');
+                        } else {
+                            $('#N_' + x).addClass('state');
+                        }
+                    };
+                    $('#NHead').removeClass('state');
+                    $('#NEnd').addClass('state');
+                };
+                $('#N_' + Location).addClass('active');
+                PageNext();
+            }
+        });
+        $(document).on('click', 'li.page-item', function () {
+            //alert($(this).attr('id'));
+            if ($(this).attr('id') != 'NHead' && $(this).attr('id') != 'NEnd' && $(this).attr('id') != 'Previous' && $(this).attr('id') != 'Next') {
+                Location = Number($(this).attr('id').split('_')[1]);
+                $('li[class="page-item active"]').removeClass('active');
+                if (Location >= 5 && Location <= Count - 5) {
+                    Change(Location);
+                } else if (Location < 5) {
+                    for (var x = 6; x < Count; x++) {
+                        if ($('#N_' + x).hasClass('state')) {
+                            //$('#N_' + x).removeClass('state');
+                        } else {
+                            $('#N_' + x).addClass('state');
+                        }
+                    };
+                    for (var x = 1; x < 6; x++) {
+                        if ($('#N_' + x).hasClass('state')) {
+                            $('#N_' + x).removeClass('state');
+                        } else {
+                            //$('#N_' + x).addClass('state');
+                        }
+                    };
+                    $('#NHead').addClass('state');
+                    $('#NEnd').removeClass('state');
+                } else if (Location > Count - 5) {
+                    for (var x = 0; x < 6; x++) {
+                        var xh = Count - 5 + x;
+                        if ($('#N_' + xh).hasClass('state')) {
+                            $('#N_' + xh).removeClass('state');
+                        } else {
+                            //$('#N_' + x).addClass('state');
+                        }
+                    };
+                    for (var x = 2; x < Count - 5; x++) {
+                        if ($('#N_' + x).hasClass('state')) {
+                            //$('#N_' + x).removeClass('state');
+                        } else {
+                            $('#N_' + x).addClass('state');
+                        }
+                    };
+                    $('#NHead').removeClass('state');
+                    $('#NEnd').addClass('state');
+                };
+                $('#N_' + Location).addClass('active');
+                //alert(limtNum * Location);
+                PageNext();
+            }
+        });
+        function CheckSite() {//检查当前页
+            if ($('#NavPage').children('ul').children('li').eq(1).hasClass('active')) {
+                if ($('#NavPage').children('ul').children('li').eq(0).hasClass('disabled')) {
+                    //已经有不可用状态
+                } else {
+                    $('#NavPage').children('ul').children('li').eq(0).addClass('disabled');
+                    $('#NavPage').children('ul').children('li').last().removeClass('disabled');
+                }
+
+            } else if ($('#NavPage').children('ul').children('li').eq(-2).hasClass('active')) {//获取倒数第二个元素
+                if ($('#NavPage').children('ul').children('li').last().hasClass('disabled')) {
+
+                } else {
+                    $('#NavPage').children('ul').children('li').last().addClass('disabled');
+                }
+                $('#NavPage').children('ul').children('li').eq(0).removeClass('disabled');
+            } else {
+                $('#NavPage').children('ul').children('li').eq(0).removeClass('disabled');
+                $('#NavPage').children('ul').children('li').last().removeClass('disabled');
+            }
+        };
+    </script>
+}

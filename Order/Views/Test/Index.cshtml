@@ -1,0 +1,68 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/fontawesome-all.css" rel="stylesheet" />
+    @*<link href="~/Content/bootstrap-fileinput/css/fileinput.css" media="all" rel="stylesheet" />
+        <link href="~/Content/bootstrap-fileinput/themes/explorer-fas/theme.css" rel="stylesheet" />*@
+    <link href="~/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+</head>
+<body>
+    <div>
+
+
+        @*<input id="f_upload" type="file" class="file" />*@
+        @*<input size="16" type="text" id="datetimeStart" readonly class="form_datetime datetimepicker datetimepicker-dropdown">*@
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+            </div>
+            <input size="16" type="text" id="datetimeStart" readonly class="form-control">
+        </div>
+        @*<div class="input-append date form_datetime">
+            <input size="16" type="datetime" value="" class="datetimepicker" readonly>
+            <span class="add-on"><i class="fas fa-th-large"></i></span>
+        </div>*@
+        <div class="input-append date form_datetime" data-date="2013-02-21T15:25:00Z">
+            <input size="16" type="text" value="" class="datetimepicker" readonly>
+            <span class="add-on"><i class="fa fa-remove"></i></span>
+            <span class="add-on"><i class="fas fa-calendar"></i></span>
+        </div>
+    </div>
+    <script src="~/Scripts/jquery-3.3.1.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    @*<script src="~/Scripts/fileinput.js"></script>
+        <script src="~/Content/bootstrap-fileinput/themes/explorer-fas/theme.js"></script>*@
+    <script src="~/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+    <script src="~/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript">
+        $("#datetimeStart").datetimepicker({
+            format: 'yyyy-mm-dd',
+            minView: 'month',
+            language: 'zh-CN',
+            autoclose: true,
+            startDate: new Date()
+        }).on("click", function () {
+            $("#datetimeStart").datetimepicker("setEndDate", $("#datetimeEnd").val())
+            });
+     
+        $(".form_datetime").datetimepicker({
+            format: "dd MM yyyy - hh:ii",
+            autoclose: true,
+            todayBtn: true,
+            startDate: "2013-02-14 10:00",
+            minuteStep: 10
+        });
+
+       
+    </script>
+</body>
+</html>

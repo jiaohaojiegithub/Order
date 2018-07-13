@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Order.Models.DBMYBLOGClass.User_Login>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.UserLogin_ID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UserLogin_Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UserLogin_PassWord)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UserLogin_State)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UserLogin_Guid)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UserLogin_CreatDT)
+        </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.UserLogin_ID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UserLogin_Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UserLogin_PassWord)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UserLogin_State)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UserLogin_Guid)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UserLogin_CreatDT)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.UserLogin_ID }) |
+            @Html.ActionLink("Details", "Details", new { id = item.UserLogin_ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.UserLogin_ID })
+        </td>
+    </tr>
+    }
+</table>

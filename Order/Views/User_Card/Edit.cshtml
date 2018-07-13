@@ -1,0 +1,289 @@
+﻿@model Order.Models.DBMYBLOGClass.User_Card
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_LayoutOriginal.cshtml";
+}
+
+@section Head{
+    <style>
+        body {
+            background-color: transparent;
+            color: black;
+        }
+    </style>
+    <link href="~/Content/bootstrap-fileinput/css/fileinput.css" media="all" rel="stylesheet" />
+    <script src="~/Content/bootstrap-fileinput/themes/fa/theme.js"></script>
+    <link href="~/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+}
+
+@using (Html.BeginForm("User_CardEdit", "User_Card", FormMethod.Post, new { id = "User_Card_ADD", name = "User_Card_ADD", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="card" style="background-color:transparent">
+        <div class="header bg-secondary text-white"><h4>资料修改</h4></div>
+        <div class="card-body">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-key"></i></span>
+                </div>
+                <input type="text" class="form-control disabled" placeholder="卡片ID" id="UserCard_ID" name="UserCard_ID" value="@Model.UserCard_ID" readonly required />
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-user-ninja"></i></span>
+                </div>
+                <input type="text" class="form-control" placeholder="昵称" id="UserCard_Nickname" name="UserCard_Nickname" value="@Model.UserCard_Nickname" required>
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-transgender-alt"></i></span>
+                </div>
+                @if (Model.UserCard_Sex == "男")
+                {
+                    <div class="custom-control custom-radio">
+                        <input id="man" name="Sex" type="radio" value="男" class="custom-control-input" checked required>
+                        <label class="custom-control-label" for="man">男</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input id="woman" name="Sex" type="radio" value="女" class="custom-control-input" required>
+                        <label class="custom-control-label" for="woman">女</label>
+                    </div>
+                }
+                else if (Model.UserCard_Sex == "女")
+                {
+                    <div class="custom-control custom-radio">
+                        <input id="man" name="Sex" type="radio" value="男" class="custom-control-input" required>
+                        <label class="custom-control-label" for="man">男</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input id="woman" name="Sex" type="radio" value="女" class="custom-control-input" checked required>
+                        <label class="custom-control-label" for="woman">女</label>
+                    </div>
+                }
+                else
+                {
+                    <div class="custom-control custom-radio">
+                        <input id="man" name="Sex" type="radio" value="男" class="custom-control-input" required>
+                        <label class="custom-control-label" for="man">男</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input id="woman" name="Sex" type="radio" value="女" class="custom-control-input" required>
+                        <label class="custom-control-label" for="woman">女</label>
+                    </div>
+                }
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-image"></i></span>
+                </div>
+                <input id="uploadfile" type="file" class="file" name="uploadfile" placeholder="请选择上传图片" />
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+                </div>
+                <input type="text" class="form-control" placeholder="手机号码" id="UserCard_MobilPhone" name="UserCard_MobilPhone" value="@Model.UserCard_MobilPhone" required>
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                </div>
+                <input size="16" type="text" id="UserCard_Birthday" name="UserCard_Birthday" placeholder="yyyy/MM/dd" readonly class="form-control" value="@Model.UserCard_Birthday" required>
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-edit"></i></span>
+                </div>
+                @*<input type="text" class="form-control" placeholder="备注" id="UserCard_Remark" name="UserCard_Remark">*@
+                <textarea class="form-control" placeholder="备注" id="UserCard_Remark" name="UserCard_Remark">@Model.UserCard_Remark</textarea>
+                @*@Html.EditorFor(model => model.UserCard_Remark, new { htmlAttributes = new { @class = "form-control", placeholder = "备注", id = "UserCard_Remark", name = "UserCard_Remark" } })*@
+            </div>
+            @*@Model.UserCard_Nickname
+                @Model.UserCard_Birthday
+                @Model.UserCard_ChatHeadImg
+                @Model.UserCard_CreatDt
+                @Model.UserCard_GmLevel
+                @Model.UserCard_ID
+                @Model.UserCard_MobilPhone
+                @Model.UserCard_Remark
+                @Model.UserCard_Sex
+                @Model.UserLogin_ID*@
+        </div>
+        <div class="card-footer text-center" style="background-color:transparent">
+            @*<button type="submit" id="agreementSub" class="btn btn-primary">修改</button>*@
+            <button type="submit" id="agreementSub" class="btn btn-default btn-lg btn-block">修改</button>
+        </div>
+    </div>
+}
+
+
+@section Scripts{
+    <script src="~/Scripts/fileinput.js"></script>
+    <script src="~/Content/bootstrap-fileinput/themes/explorer-fas/theme.js"></script>
+    <script src="~/Scripts/locales/zh.js"></script>
+    <script src="~/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+    <script src="~/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="~/Scripts/inputmask/inputmask.js"></script>
+    <script src="~/Scripts/jquery.inputmask.bundle.js"></script>
+    <script src="~/Scripts/inputmask/phone-codes/phone.js"></script>
+    <script src="~/Scripts/inputmask/phone-codes/phone-be.js"></script>
+    <script src="~/Scripts/inputmask/phone-codes/phone-ru.js"></script>
+    <script src="~/Scripts/jquery.form.js"></script>
+    <script>
+        //var UserCard_Nickname= @Model.UserCard_Nickname;
+        $(document).ready(function () {
+            // $("#UserCard_Nickname").val(UserCard_Nickname);
+           // alert(UserCard_Nickname);
+        });
+        $("#uploadfile").fileinput({
+            language: 'zh', //设置语言
+            showCaption: true,//是否显示被选文件的简介
+            showBrowse: true,//是否显示浏览按钮
+            showPreview: true,//是否显示预览区域
+            showRemove: true,//是否显示移除按钮
+            showUpload: false,//是否显示上传按钮
+            showCancel: true,//是否显示取消按钮
+            showClose: true,//是否显示关闭按钮
+            showUploadedThumbs: true,
+            browseOnZoneClick: false,
+            autoReplace: true,//是否自动替换当前图片，设置为true时，再次选择文件， 会将当前的文件替换掉。
+            previewZoomButtonIcons: {//预览图标按钮
+                prev: '<i class="fas fa-caret-left"></i>',//glyphicon glyphicon-triangle-left
+                next: '<i class="fas fa-caret-right"></i>',//glyphicon glyphicon-triangle-right
+                toggleheader: '<i class="fas fa-arrows-alt-v"></i>',//glyphicon glyphicon-resize-vertical
+                fullscreen: '<i class="fas fa-arrows-alt"></i>',//glyphicon glyphicon-fullscreen
+                borderless: '<i class="far fa-window-maximize"></i>',//glyphicon glyphicon-resize-full
+                close: '<i class="fas fa-times"></i>'//glyphicon glyphicon-remove
+            },
+            previewZoomButtonClasses: {
+                prev: 'btn btn-navigate',
+                next: 'btn btn-navigate',
+                toggleheader: 'btn btn-sm btn-kv btn-default btn-outline-secondary',
+                fullscreen: 'btn btn-sm btn-kv btn-default btn-outline-secondary',
+                borderless: 'btn btn-sm btn-kv btn-default btn-outline-secondary',
+                close: 'btn btn-sm btn-kv btn-default btn-outline-secondary'
+            },
+
+            previewFileIcon: "<iclass='fas fa-king'></i>",
+            allowedFileExtensions: ['jpg', 'gif', 'png'],//接收的文件后缀
+            previewFileIcon: '<i class="fas fa-file"></i>',//glyphicon glyphicon-file
+            previewFileIconClass: 'file-other-icon',
+            previewFileIconSettings: {},
+            previewFileExtSettings: {},
+            buttonLabelClass: 'hidden-xs',
+            browseIcon: '<i class="fas fa-folder-open"></i>&nbsp;',//glyphicon glyphicon-folder-open
+            browseClass: 'btn btn-primary',
+            removeIcon: '<i class="fas fa-trash-alt"></i>',//glyphicon glyphicon-trash
+            removeClass: 'btn btn-default btn-secondary',
+            cancelIcon: '<i class="fas fa-ban"></i>',//glyphicon glyphicon-ban-circle
+            cancelClass: 'btn btn-default btn-secondary',
+            uploadIcon: '<i class="fas fa-upload"></i>',//glyphicon glyphicon-upload
+            uploadClass: 'btn btn-default btn-secondary',
+            //uploadUrl: "UploadSerivcePhoto",//上传的地址
+            uploadAsync: true,
+            //uploadExtraData:{"id": 1, "fileName":'123.mp3'},//上传文件时额外传递的参数设置
+            zoomModalHeight: 480,
+            minImageWidth: null,
+            minImageHeight: null,
+            maxImageWidth: null,
+            maxImageHeight: null,
+            //resizeImage: false,
+            //resizePreference: 'width',
+            //resizeQuality: 0.92,
+            //resizeDefaultImageType: 'image/jpeg',
+            resizeIfSizeMoreThan: 0, // in KB
+            minFileSize: 0,
+            maxFileSize: 0,
+            maxFilePreviewSize: 25600, // 25 MB
+            minFileCount: 0,
+            maxFileCount: 1,//表示允许同时上传的最大文件个数
+            validateInitialCount: false,
+            //msgValidationErrorClass: 'text-danger',
+            //msgValidationErrorIcon: '<i class="fas fa-exclamation-circle"></i> ',//glyphicon glyphicon-exclamation-sign
+            //msgErrorClass: 'file-error-message',
+            //progressThumbClass: "progress-bar bg-success progress-bar-success progress-bar-striped active",
+            //progressClass: "progress-bar bg-success progress-bar-success progress-bar-striped active",
+            //progressCompleteClass: "progress-bar bg-success progress-bar-success",
+            //progressErrorClass: "progress-bar bg-danger progress-bar-danger",
+            //progressUploadThreshold: 99,
+            //previewFileType: 'image',
+            //elCaptionContainer: null,
+            //elCaptionText: null,
+            //elPreviewContainer: null,
+            //elPreviewImage: null,
+            //elPreviewStatus: null,
+            //elErrorContainer: null,
+            //errorCloseButton: $h.closeButton('kv-error-close'),
+            //slugCallback: null,
+            //dropZoneEnabled: true,
+            //dropZoneTitleClass: 'file-drop-zone-title',
+            //otherActionButtons: '',
+            //textEncoding: 'UTF-8',
+            //ajaxSettings: {},
+            //ajaxDeleteSettings: {},
+            //showAjaxErrorDetails: true,
+            //mergeAjaxCallbacks: false,
+            //mergeAjaxDeleteCallbacks: false,
+            //retryErrorUploads: true,
+            //reversePreviewOrder: false,
+            fileActionSettings: {
+                showRemove: true,
+                showUpload: true,
+                showDownload: true,
+                showZoom: true,
+                showDrag: true,
+                removeIcon: '<i class="fas fa-trash-alt"></i>',//glyphicon glyphicon-trash
+                removeClass: 'btn btn-sm btn-kv btn-default btn-outline-secondary',
+                removeErrorClass: 'btn btn-sm btn-kv btn-danger',
+                removeTitle: '移除文件',
+                uploadIcon: '<i class="fas fa-upload"></i>',//glyphicon glyphicon-upload
+                uploadClass: 'btn btn-sm btn-kv btn-default btn-outline-secondary',
+                uploadTitle: '上传文件',
+                uploadRetryIcon: '<i class="fas fa-redo-alt"></i>',//glyphicon glyphicon-repeat
+                uploadRetryTitle: '重新上传',
+                downloadIcon: '<i class="fas fa-download"></i>',//glyphicon glyphicon-download
+                downloadClass: 'btn btn-sm btn-kv btn-default btn-outline-secondary',
+                downloadTitle: '下载文件',
+                zoomIcon: '<i class="fas fa-search-plus"></i>',//glyphicon glyphicon-zoom-in
+                zoomClass: 'btn btn-sm btn-kv btn-default btn-outline-secondary',
+                zoomTitle: '详细视图',
+                dragIcon: '<i class="fas fa-expand-arrows-alt"></i>',//glyphicon glyphicon-move
+                dragClass: 'text-info',
+                dragTitle: '移动 / 重新排列',
+                dragSettings: {},
+                indicatorNew: '<i class="fas fa-plus-circle text-warning"></i>',//glyphicon glyphicon-plus-sign
+                indicatorSuccess: '<i class="fas fa-check-circle text-success"></i>',//glyphicon glyphicon-ok-sign
+                indicatorError: '<i class="fas fa-exclamation-circle text-danger"></i>',//glyphicon glyphicon-exclamation-sign
+                indicatorLoading: '<i class="fas fa-hourglass text-muted"></i>',//glyphicon glyphicon-hourglass
+                indicatorNewTitle: '不能再次上传',
+                indicatorSuccessTitle: '上传成功',
+                indicatorErrorTitle: '上传失败',
+                indicatorLoadingTitle: '上传中 ...'
+            }
+        });
+        //.on("fileuploaded", function (event, data, previewId, index) {
+        //    alert("上传成功");
+        //})
+        $("#UserCard_Birthday").datetimepicker({
+            format: 'yyyy-mm-dd',
+            minView: 'month',
+            todayHighlight: true,
+            keyboardNavigation: true,
+            forceParse: true,
+            language: 'zh-CN',
+            autoclose: true,
+            startDate: '1900-01-01'
+        }).on("click", function () {
+            $("#UserCard_Birthday").datetimepicker('setStartDate', '1900-01-01')//"setEndDate", $("#datetimeEnd").val()
+        });
+
+        $("#UserCard_MobilPhone").inputmask({
+            mask: "999-9999-9999",
+            greedy: false,
+        });
+    </script>
+}
+
+

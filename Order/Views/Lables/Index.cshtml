@@ -1,0 +1,267 @@
+﻿
+@{
+    Layout = null;
+}
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<link href="~/bootstrap-table-develop/dist/bootstrap-table.css" rel="stylesheet" />
+<link href="~/Content/fontawesome-all.css" rel="stylesheet" />
+
+<div class="panel-body" style="padding-bottom:0px;">
+    <div id="toolbar" class="btn-group">
+        <button id="btn_add" type="button" class="btn btn-default">
+            <span class="fas fa-plus-circle" aria-hidden="true"></span>新增
+        </button>
+
+    </div>
+    <table id="table"></table>
+</div>
+
+<!-- 模态框 -->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">修改标签</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                @Html.AntiForgeryToken()
+                <div class="input-group mb-3 hidden">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">标签备注</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="标签ID" id="inputLable_ID" name="inputLable_ID" disabled>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">标签备注</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="标签备注" id="inputLable_Remark" name="inputLable_Remark" required>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">标签文本</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="标签文本" id="inputLable_Text" name="inputLable_Text" required>
+                </div>
+                <button class="btn btn-lg btn-primary btn-block" type="button" id="EditLable">修改</button>
+            </div>
+
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/umd/popper.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<script src="~/bootstrap-table-develop/dist/bootstrap-table.js"></script>
+<script src="~/bootstrap-table-develop/dist/locale/bootstrap-table-zh-CN.js"></script>
+@*<script src="~/Scripts/jquery.validate.js"></script>
+<script src="~/Scripts/messages_zh.js"></script>*@
+<script>
+
+    $(function () {
+        //1.初始化Table
+        var oTable = new TableInit();
+        oTable.Init();
+    });
+    var TableInit = function () {
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.Init = function () {
+            $('#table').bootstrapTable({
+                url: '/Lables/GetLablesInfo',
+                method: 'get',                      //请求方式（*）
+                toolbar: '#toolbar',                //工具按钮用哪个容器
+                striped: true,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: true,                     //是否启用排序
+                sortOrder: "asc",                   //排序方式
+                queryParams: oTableInit.queryParams,//传递参数（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100, 'All'],        //可供选择的每页的行数（*）
+                search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                contentType: "application/x-www-form-urlencoded",
+                strictSearch: true,
+                showColumns: true,                  //是否显示所有的列
+                showRefresh: true,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: true,                //是否启用点击选中行
+                height: 800,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "no",                     //每一行的唯一标识，一般为主键列
+                showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
+                cardView: false,                    //是否显示详细视图
+                detailView: false,                   //是否显示父子表
+                // showFullscreen: true, //是否显示全屏按钮。
+                columns: [
+                    {
+                        field: 'Lable_ID',
+                        title: '标签ID'
+                    }, {
+                        field: 'Lable_CreatDT',
+                        title: '创建时间',
+                        //获取日期列的值进行转换
+                        formatter: function (value, row, index) {
+                            return changeDateFormat(value)
+                        }
+                    }, {
+                        field: 'Lable_Text',
+                        title: '标签文本'
+                    }, {
+                        field: 'Lable_Remark',
+                        title: '备注'
+                    },
+                    {
+                        field: 'operate',
+                        title: '操作',
+                        formatter: operateFormatter, //自定义方法，添加操作按钮
+                        width: 180,
+                        align: 'center',
+                        events: operateEvents
+                    }
+                ],
+                rowStyle: function (row, index) {
+                    var classesArr = ['success', 'info'];
+                    var strclass = '';
+                    if (index % 2 === 0) {//偶数行
+                        strclass = classesArr[0];
+                    } else {//奇数行
+                        strclass = classesArr[1];
+                    }
+                    return { classes: strclass };
+                },//隔行变色
+            });
+        };
+        //得到查询的参数
+        oTableInit.queryParams = function (params) {
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                limit: params.limit,   //页面大小
+                offset: params.offset,
+                // LableText: $('#Search').val()
+            };
+            return temp;
+        };
+        return oTableInit;
+    };
+    function operateFormatter(value, row, index) {//赋予的参数
+        return [
+            //'<a class="tableAdd"><span class="fas fa-plus-circle" aria-hidden="true"></span></a>|',
+            '<a class="tableEdit"  data-toggle="modal" data-target="#myModal"><span class="fas fa-edit" aria-hidden="true"></span></a>|',
+            '<a class="tableDelete"><span class="fas fa-trash-alt" aria-hidden="true"></span></a>',
+        ].join('');
+    };
+    window.operateEvents = {
+        //'click .tableAdd': function (e, value, row, index) {
+        //    alert('You click like action, row: ' + JSON.stringify(row));
+        //},
+        'click .tableDelete': function (e, value, row, index) {
+           
+            //alert(row.Lable_ID);
+            $.ajax({
+                type: 'POST',
+                url: '/Lables/DeleteConfirmed',
+                cache: false,
+                //headers: headers,
+                data: {
+                    id: row.Lable_ID
+                },
+                success: function (data) {
+                    if (data == 0) {
+                        alert("删除成功");
+                        $('#table').bootstrapTable('remove', {
+                            field: 'Lable_ID',
+                            values: [row.Lable_ID]
+                        });
+                    }
+                    else {
+                        alert("删除失败");
+                    }
+                },
+                error: function () {
+                    alert("Error");
+                }
+            });
+        },
+        'click .tableEdit': function (e, value, row, index) {
+            //alert('单击修改: ' + JSON.stringify(row));
+            $("#inputLable_Text").val(row.Lable_Text);
+            $("#inputLable_Remark").val(row.Lable_Remark);
+            $("#inputLable_ID").val(row.Lable_ID)
+        }
+    };
+    //转换日期格式(时间戳转换为datetime格式)
+    function changeDateFormat(cellval) {
+        var dateVal = cellval + "";
+        if (cellval != null) {
+            var date = new Date(parseInt(dateVal.replace("/Date(", "").replace(")/", ""), 10));
+            var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+            var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+
+            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+
+            return date.getFullYear() + "-" + month + "-" + currentDate + " " + hours + ":" + minutes + ":" + seconds;
+        }
+    };
+
+    $('#btn_add').click(function () {
+        window.open("/Lables/Create", "_self");
+    });
+    //获取防伪标记
+    @*var token = $('@Html.AntiForgeryToken()').val();
+    var headers = {};
+    //防伪标记放入headers
+    //也可以将防伪标记放入data
+    headers["__RequestVerificationToken"] = token;*@
+        //获取防伪标记
+    //var token = $('input[name=__RequestVerificationToken]').val();
+    //var headers = {};
+    //headers["__RequestVerificationToken"] = token;
+    $("#EditLable").click(function () {
+        $.ajax({
+            type: 'POST',
+            url: '/Lables/Edit',
+            cache: false,
+            //headers: headers,
+            data: {
+                Lable_Text: $('input[id="inputLable_Text"]').val(),
+                Lable_Remark: $('input[id="inputLable_Remark"]').val(),
+                inputLable_ID: $("#inputLable_ID").val()
+            },
+            success: function (data) {
+               //alert(data);
+                if (data == 0) {
+                    alert("修改成功");
+                    $('button[class="close"][data-dismiss="modal"]').click();//<button type="button" class="close" data-dismiss="modal">×</button>
+                }
+                else if (data == 1) {
+                    alert("标签内容不能为空");
+                }
+                else if (data == 2) {
+                    alert("标签已存在");
+                }
+                else {
+                    alert("错误")
+                }
+            },
+            error: function () {
+                alert("Error");
+            }
+        })
+    })
+</script>

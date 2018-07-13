@@ -1,0 +1,329 @@
+﻿
+@{
+    ViewBag.Title = "TestComment";
+    Layout = "~/Views/Shared/_LayoutOriginal.cshtml";
+}
+
+@section Head{
+    <style>
+        .PINLUNCON {
+            width: calc(100% - 60px);
+            min-height: 60px;
+            border-bottom: 1px solid #808080;
+            margin-top: 15px;
+        }
+
+        .UserName {
+            font-family: "华文行楷";
+            font-size: 16px;
+            width: 100%;
+            height: 20px;
+            text-align: left;
+            border-bottom: 1px dashed #808080;
+        }
+
+        .PINLUNCONINFO {
+            font-family: "宋体";
+            font-size: 16px;
+            width: 100%;
+            height: 20px;
+            text-align: left;
+            color: #808080;
+        }
+
+        .PINLUNCONINFOTOW {
+            width: 100%;
+            float: left;
+        }
+
+        .PINLUNCONINFOTOWCon {
+            width: calc(100% - 35px);
+            float: left;
+        }
+
+        .spenhover {
+            background-color: #808080;
+            cursor: pointer;
+            color: white;
+        }
+
+        .state {
+            display: none;
+        }
+    </style>
+}
+    <div>
+        <!--文章评论框-->
+        <div>
+            <div style="float:left;width:100px;text-align:center;height:100px">
+                <img src="~/Resource/Img/20180518030030100c8fc06cd-770e-49f1-b77b-cdc54d8a0d45.jpg" class="img-circle" style="width:88px;height:88px;border-radius:50%;margin-top:6px;" />
+            </div>
+            <div style="float:left;text-align:left;height:100px;width: calc(100% - 220px);">
+                <textarea id="textComment" name="textComment" class="form-control" style="width:100%;height:100px" placeholder="请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。"></textarea>
+            </div>
+            <div style="float:right;width:100px;height:100px;margin-right:10px;">
+                <button type="button" class="btn btn-default btn-block" id="SendComment" name="SendComment" style="width:100px;height:100px">发送评论</button>
+            </div>
+
+        </div>
+        <!--评论列表-->
+        <div class="container-fluid" style="margin-top:10px;">
+            <div id="CommentList">
+
+            </div>
+        </div>
+
+        <div class="fixed-bottom state" style="margin-bottom:20px" id="CommentMessage">
+            @*<textarea name="content" id="editor"></textarea>*@
+            <div style="float:left;width:100px;text-align:center;height:100px">
+                <img src="~/Resource/Img/20180518030030100c8fc06cd-770e-49f1-b77b-cdc54d8a0d45.jpg" class="img-circle" style="width:88px;height:88px;border-radius:50%;margin-top:6px;" />
+            </div>
+            <div style="float:left;text-align:left;height:100px;width: calc(100% - 220px);">
+                <textarea id="textCommentMess" name="textCommentMess" class="form-control" style="width:100%;height:100px" placeholder="请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。"></textarea>
+            </div>
+            <div style="float:right;width:100px;height:100px;margin-right:10px;">
+                <button type="button" class="btn btn-default btn-block" id="SendCommentMess" name="SendCommentMess" style="width:100px;height:100px">发送评论</button>
+            </div>
+            @*<button type="button" class="btn btn-default btn-sm btn-block" id="SendComment" name="SendComment">发送</button>*@
+        </div>
+    </div>
+@section Scripts{
+
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: 'POST',
+                url: '/Test/CommentALL',
+                cache: false,
+                dataType: 'json',
+                data: {
+                    id:'@ViewBag.Article_ID'
+                },
+                success: function (data) {
+
+                    $.each(data, function (i, val) {
+                        var zuoze;
+                        if (val.UserLogin_ID == 1) {
+                            zuoze = '<span class="badge badge-warning h6">作者</span>';
+                        } else {
+                            zuoze = '<span class="badge badge-warning h6 state"></span>';
+                        };
+                        //var htmltow = '<div class="PINLUNCONINFOTOW">' +
+                        //    '<div style="width:35px;" class="float-left text-center"><img src="~/Resource/Img/20180518030030100c8fc06cd-770e-49f1-b77b-cdc54d8a0d45.jpg" class="img-circle" style="width:30px;height:30px;border-radius:50%" /></div>' +
+                        //    '<div class="PINLUNCONINFOTOWCon">' +
+                        //    '<span>用户名第二级</span><span class="badge badge-info" style="font-family:Arial;margin-left:8px">LV1</span>' +
+                        //    ' <span style="margin-left:10px">回复内容</span>' +
+                        //    '<div style="width:100%;height:20px; font-family:宋体;text-align:left;color:#808080;font-size:12px">' +
+                        //    '<span>2017-12-11</span><span class="badge badge-pill" id="Comment2_child">回复</span>' +//ID需要改
+                        //    '<div class="float-right text-right" style="position:relative">' +
+                        //    '<div class="fas fa-ellipsis-v state"></div><div style="width:160px;z-index:10;position:absolute;left:-160px;" class="state">' +
+                        //    '<ul class="list-group text-center"><li class="list-group-item text-center">加入黑名单</li><li class="list-group-item text-center">举报</li></ul></div></div>' +
+                        //    '</div>' +
+                        //    '</div>' +
+                        //    '</div>' +
+                        //    '</div>';
+                        //var htmlto = CommentMess(val.Comment_ID);
+                        var html = '<div id="pinglun' + val.Comment_ID + '" class="text-dark bg-transparent">' +
+                            '<div class="text-center text-dark bg-transparent float-left" style="width:60px;">' +
+                            '<img src="' + val.UserCard_ChatHeadImg+'" class="img-circle" style="width:55px;height:55px;border-radius:50%" />' +
+                            '<button type="button" class="btn btn-primary btn-sm" id="UserLoginID' + val.UserLogin_ID+'" style="margin-top:20px">关注</button>' +
+                            '</div>' +
+                            ' <div class="text-left text-dark bg-transparent float-left PINLUNCON">' +
+                            '<div class="UserName">' + zuoze + '<span>' + val.UserLogin_Name + '</span><span class="badge badge-info" style="font-family:Arial;margin-left:8px">LV' + val.UserCard_GmLevel + '</span></div>' +
+                            ' <p style="font-family:华文新魏;">' + val.Comment_Contene + '</p>' +
+                            '<div class="PINLUNCONINFO"><span>#' + i + '</span><span style="margin-left:15px">来自B站的嘤嘤怪</span><span style="margin-left:15px">' + val.创建时间 + '</span><span class="badge badge-pill" style="margin-left:15px" id="Comment' + val.Comment_ID+'">回复</span><div class="float-right" style="position:relative">' +
+                            '<div class="fas fa-ellipsis-v"></div>' +
+                            '<div style="width:160px;z-index:10;position:absolute;left:-160px;" class="state"><ul class="list-group text-center"><li class="list-group-item">加入黑名单</li><li class="list-group-item">举报</li></ul></div></div></div>' +
+                            '<span><a href="#" name="AllComment" id="AllComment' + val.Comment_ID+ '">>>查看所有回复<<</a></span>' +//另外子评论
+                            ' <div style="width:100%" id="CommentMess' + val.Comment_ID+'">' +
+                            //htmltow+
+                            '</div>'+
+                            '</div>'+
+                            '</div>';
+                        $('#CommentList').append(html);
+                        //CommentMess(val.Comment_ID);
+                    });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("加载失败：" + errorThrown);
+                }
+            });
+        });
+        var CommentMessID = 0;
+        var htmltow = '';
+        function CommentMess(id) {
+
+            var xn = "#CommentMess" + id;
+             $.ajax({
+                type: 'POST',
+                 url: '/Test/Comment_ReplyALL',
+                cache: false,
+                dataType: 'json',
+                 data: {
+                     id: id
+                },
+                success: function (data) {
+                    $.each(data, function (i, val) {
+                            htmltow = '<div class="PINLUNCONINFOTOW">' +
+                            '<div style="width:35px;" class="float-left text-center"><img src="' + val.UserCard_ChatHeadImg + '" class="img-circle" style="width:30px;height:30px;border-radius:50%" /></div>' +
+                            '<div class="PINLUNCONINFOTOWCon">' +
+                            '<span>' + val.UserLogin_Name + '</span><span class="badge badge-info" style="font-family:Arial;margin-left:8px">LV' + val.UserCard_GmLevel+'</span>' +
+                            ' <span style="margin-left:10px">' + val.Comment_Reply_Contene+'</span>' +
+                            '<div style="width:100%;height:20px; font-family:宋体;text-align:left;color:#808080;font-size:12px">' +
+                                '<span>' + val.创建时间 +'</span><span class="badge badge-pill" style="margin-left:15px" id="Comment'+id+'_child">回复</span>' +//ID需要改
+                            '<div class="float-right text-right" style="position:relative">' +
+                            '<div class="fas fa-ellipsis-v state"></div><div style="width:160px;z-index:10;position:absolute;left:-160px;" class="state">' +
+                            '<ul class="list-group text-center"><li class="list-group-item text-center">加入黑名单</li><li class="list-group-item text-center">举报</li></ul></div></div>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>';
+                        $(xn).append(htmltow);
+                    });
+                    htmltow = '';
+                    //return htmltow;
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("加载失败：" + errorThrown);
+                }
+            });
+            //alert(htmltow);
+
+        };
+        //评论模块
+        $(document).on('mouseenter', 'span.badge.badge-pill', function () {
+            $(this).addClass("spenhover");
+        });
+        $(document).on('mouseleave', 'span.badge.badge-pill', function () {
+            $(this).removeClass("spenhover");
+        });
+        $(document).on('click', 'span.badge.badge-pill', function () {
+            //alert("测试");
+            //alert("@@" + $(this).parent().parent('.PINLUNCONINFOTOWCon').children("span").eq(0).text());
+            //alert($("#yo").text());
+            var IDs = $(this).attr('id');
+            var ID = IDs.split('_');
+            if (ID.length > 1) {
+               // alert("@@" + $(this).parent().parent('.PINLUNCONINFOTOWCon').children("span").eq(0).text());//第二级评论
+                CommentMessID = ID[0].substr(7, ID[0].length);
+                $('#textCommentMess').val("@@" + $(this).parent().parent('.PINLUNCONINFOTOWCon').children("span").eq(0).text());
+                //alert(ID[0] + "\n" + ID[0].length);
+            }
+            else {
+                //alert("@@" + $(this).parent().parent().children("div").eq(0).children("span").eq(1).text());//第一级评论
+               // alert(ID[0] + "\n" + ID[0].length);
+                CommentMessID = ID[0].substr(7, ID[0].length);
+                $('#textCommentMess').val("@@" + $(this).parent().parent().children("div").eq(0).children("span").eq(1).text());
+            }
+            $('#CommentMessage').removeClass('state');
+        });
+        $(document).on('mouseenter', '.PINLUNCONINFOTOW', function () {
+            $(this).children('div .PINLUNCONINFOTOWCon').children('div').children('div').children('div').eq(0).removeClass('state');
+        });
+        $(document).on('mouseleave', '.PINLUNCONINFOTOW', function () {
+            $(this).children('div .PINLUNCONINFOTOWCon').children('div').children('div').children('div').eq(0).addClass('state');
+            $(this).children('div .PINLUNCONINFOTOWCon').children('div').children('div').children('div').eq(1).addClass('state');
+        });
+        $(document).on('mouseenter', 'li[class="list-group-item"]', function () {
+            $(this).addClass("bg-light");
+        });
+        $(document).on('mouseleave', 'li[class="list-group-item"]', function () {
+            $(this).removeClass("bg-light");
+        });
+        //更多功能
+        $(document).on('click', 'div.fas.fa-ellipsis-v', function () {
+            if ($(this).next().hasClass('state')) {
+                $(this).next().removeClass('state');
+            } else {
+                $(this).next().addClass('state');
+            }
+        });
+        //评论隐藏或显示
+        $(document).on('click', 'a[name="AllComment"]', function () {
+            var id = $(this).attr('id').substr(10, $(this).attr('id').length);
+            var am = '#CommentMess' + id;
+            if ($(this).children().length > 0) {
+                //判断是否有子评论
+                $(am).empty();
+            }
+            else {
+                $(am).empty();
+                //没有便查询
+                CommentMess(id);
+            }
+
+            //alert(id);
+            if ($(this).parent().next('div').hasClass('state')) {
+                $(this).parent().next('div').removeClass('state');
+            } else {
+                $(this).parent().next('div').addClass('state');
+            }
+        });
+        $('#SendComment').click(function () {
+            //alert("测试");
+            //alert($('#textComment').val());
+            $.ajax({
+                type: 'POST',
+                url: '/Test/CommentADD',
+                cache: false,
+                dataType: 'json',
+                data: {
+                    Contene: $('#textComment').val(),
+                    ArticleID: 1,
+                    UserCardID:1
+                },
+                success: function (data) {
+                    if (data == 10)
+                        alert("添加成功");
+                    else
+                        alert("添加失败");
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("加载失败：" + errorThrown);
+                }
+            });
+        });
+        //回复评论
+        $('#SendCommentMess').click(function () {
+            alert(CommentMessID);//标签ID是否赋值
+            if ($('#textCommentMess').val().length > 0) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Test/Comment_ReplyADD',
+                    cache: false,
+                    dataType: 'json',
+                    data: {
+                        CommentID: CommentMessID ,
+                        CommentReplyContene: $('#textCommentMess').val(),
+                        UserCardID: 1
+                    },
+                    success: function (data) {
+                        if (data == 10)
+                            alert("添加成功");
+                        else
+                            alert("添加失败");
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("加载失败：" + errorThrown);
+                    }
+                });
+            }
+            else {
+                alert("评论不能为空");
+            }
+        });
+        //jQuery实现指定区域外单击关闭指定层的方法
+        $(document).mouseup(function (e) {
+            if ($(e.target).parents("#CommentMessage").length == 0) {
+                if ($('#CommentMessage').hasClass('state')) {
+                    //单击层以外的地方隐藏框
+                }
+                else {
+                    $('#CommentMessage').addClass('state');
+                }
+            }
+        })
+    </script>
+}
+
+

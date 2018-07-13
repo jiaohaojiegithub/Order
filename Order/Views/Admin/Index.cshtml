@@ -1,0 +1,101 @@
+﻿
+@{
+    ViewBag.Title = "后台管理";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+    @section Scripts{
+        <script>
+            $(document).ready(function () {
+                // $("iframe").hide();
+                $.ajax({
+                    type: 'POST',
+                    url: '/Admin/UserLoginImg',
+                    cache: false,
+                    dataType: 'json',
+                    success: function (data) {
+                        $.each(data, function (i, val) {
+                            //var html = '<option>' + val.Forum_Name + '</option>';
+                            $("#AdminUser").attr("src", val.头像);
+                            $("#AdminUser").attr("alt", val.用户名);
+                            $("#UserAdminName").text(val.用户名);
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("加载失败：" + errorThrown);
+                    }
+                });
+            });
+            $('#Test').click(function () {
+                //alert("测试");
+               // $("iframe").hide();
+                $("#PartialView").empty();//删除元素的子元素
+                $("#PartialView").load("/Admin/Test");//将PartialIndex分部视图中的内容加载到id为loadData这个元素中去
+                $("#biaoqian1").text("测试");
+                $("#biaoqian2").text("测试");
+            });
+            $("#UserLogin").click(function () {
+               // $("iframe").hide();
+                $("#PartialView").empty();//删除元素的子元素
+                $("#PartialView").load("/User_Login/Index");
+                $("#biaoqian1").text("用户表-UserLogin");
+                $("#biaoqian2").text("用户表-UserLogin");
+                //$("#PartialView").append('<iframe style="width:100%;height:auto;min-height:850px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="/User_Login/Index"></iframe>');
+            });
+            $("#UserADD").click(function () {
+               // $("iframe").hide();
+                $("#PartialView").empty();//删除元素的子元素
+                $("#PartialView").load("/Admin/UserLoginAdd");
+                $("#biaoqian1").text("用户添加");
+                $("#biaoqian2").text("用户添加");
+            });
+            $("#UserCardInfoView").click(function () {
+               // $("iframe").hide();
+                $("#PartialView").empty();//删除元素的子元素
+                $("#PartialView").load("/Admin/UserCardInfo");
+                $("#biaoqian1").text("用户信息");
+                $("#biaoqian2").text("用户信息");
+            });
+            $("#ArticleADDView").click(function () {
+               // $("iframe").hide();
+                $("#PartialView").empty();//删除元素的子元素
+                $("#PartialView").load("/Admin/ArticleADD");
+                $("#biaoqian1").text("新增文章");
+                $("#biaoqian2").text("新增文章");
+            });
+            $("#DBUserCardView").click(function () {
+               // $("iframe").hide();
+                $("#PartialView").empty();//删除元素的子元素
+                $("#PartialView").load("/User_Card/Index");
+                $("#biaoqian1").text("用户详细表-UserCard");
+                $("#biaoqian2").text("用户详细表-UserCard");
+            });
+            $("#DBLablesView").click(function () {
+                // $("#PartialView").load("/Lables/Index");
+                $("#PartialView").empty();//删除元素的子元素
+                $("#biaoqian1").text("标签表-Lables");
+                $("#biaoqian2").text("标签表-Lables");
+                $("#PartialView").append('<iframe style="width:100%;height:auto;min-height:850px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="/Lables/Index"></iframe>');
+                //$("iframe").attr('src', '/Lables/Index');
+                //$("iframe").show();
+            });
+            $("#DBForumView").click(function () {
+                $("#PartialView").empty();//删除元素的子元素
+                $("#biaoqian1").text("数据分类表-Forum");
+                $("#biaoqian2").text("数据分类表-Forum");
+                $("#PartialView").append('<iframe style="width:100%;height:auto;min-height:1200px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="/Forum/Index"></iframe>');
+            });
+            $("#DBArticleTypeView").click(function () {
+                $("#PartialView").empty();//删除元素的子元素
+                $("#biaoqian1").text("文章分类表-ArticleType");
+                $("#biaoqian2").text("文章分类表-ArticleType");
+                $("#PartialView").append('<iframe style="width:100%;height:auto;min-height:1200px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="/ArticleType/Index"></iframe>');
+            });
+            $("#DBArticleView").click(function () {
+                $("#PartialView").empty();//删除元素的子元素
+                $("#biaoqian1").text("文章表-Article");
+                $("#biaoqian2").text("文章表-Article");
+                $("#PartialView").append('<iframe style="width:100%;height:auto;min-height:1200px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="/ManagementOrdinary/ArticleInfo_Ordinary"></iframe>');
+            });
+        </script>
+    }
+@*<iframe style="width:auto;height:auto;min-height:800px;border-radius:unset,inherit;background-color:red;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" class="btn" src="/Lables/Index"></iframe>*@

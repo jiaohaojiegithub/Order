@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewBag.Title = "IndexS";
+    Layout = null;
+}
+
+<input type="tel" id="ArticleType_NameState" value="@ViewBag.state" hidden />
+<div id="navTop">
+
+</div>
+
+<script>
+        @*var a=@ViewBag.state;*@
+        $(document).ready(function () {
+            alert($("#ArticleType_NameState").val());
+            //导航栏
+            $.ajax({
+                url: '/Article/ArticleInfo',
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    ArticleType_Name: $("#ArticleType_NameState").val()
+                },
+                success: function (data) {
+                    //alert(data[0].ForumName);
+                    $.each(data, function (i, val) {
+                        var html = val.文章描述+'<hr>'+ val.文章内容;
+                        $("#navTop").append(html);
+                       // alert(val.文章描述);
+                    });
+                    //alert(data[0]);
+                    //$("#main").html(data);
+                    //$(".navbar-nav mr-auto").append(html);
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("加载失败：" + errorThrown);
+                }
+            });
+            //加载文章
+            //$("#ArticleList").empty();//移除所有文章
+            //$("#ArticleList").load("");
+        });
+</script>
+

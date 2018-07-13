@@ -1,0 +1,162 @@
+﻿@{
+    Layout = null;
+}
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<link href="~/bootstrap-table-develop/dist/bootstrap-table.css" rel="stylesheet" />
+@*<link href="~/Content/fontawesome-all.css" rel="stylesheet" />*@
+
+
+<div class="panel-body" style="padding-bottom:0px;">
+    <div id="toolbar" class="btn-group">
+        <button id="btn_add" type="button" class="btn btn-default">
+            <span class="fas fa-plus-circle" aria-hidden="true"></span>新增
+        </button>
+        <button id="btn_edit" type="button" class="btn btn-default">
+            <span class="fas fa-edit" aria-hidden="true"></span>修改
+        </button>
+        <button id="btn_delete" type="button" class="btn btn-default">
+            <span class="fas fa-trash-alt" aria-hidden="true"></span>删除
+        </button>
+    </div>
+    <table id="tb_departments"></table>
+</div>
+
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/umd/popper.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<script src="~/bootstrap-table-develop/dist/bootstrap-table.js"></script>
+<script src="~/bootstrap-table-develop/dist/locale/bootstrap-table-zh-CN.js"></script>
+<script>
+
+       $(function () {
+            //1.初始化Table
+            var oTable = new TableInit();
+            oTable.Init();
+        });
+        var TableInit = function () {
+            var oTableInit = new Object();
+            //初始化Table
+            oTableInit.Init = function () {
+                $('#tb_departments').bootstrapTable({
+                    url: '/User_Card/User_CardInfoAll',
+                    method: 'get',                      //请求方式（*）
+                    toolbar: '#toolbar',                //工具按钮用哪个容器
+                    striped: true,                      //是否显示行间隔色
+                    cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                    pagination: true,                   //是否显示分页（*）
+                    sortable: false,                     //是否启用排序
+                    sortOrder: "asc",                   //排序方式
+                    queryParams: oTableInit.queryParams,//传递参数（*）
+                    sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                    pageNumber: 1,                       //初始化加载第一页，默认第一页
+                    pageSize: 10,                       //每页的记录行数（*）
+                    pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                    search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                    contentType: "application/x-www-form-urlencoded",
+                    strictSearch: true,
+                    showColumns: true,                  //是否显示所有的列
+                    showRefresh: true,                  //是否显示刷新按钮
+                    minimumCountColumns: 2,             //最少允许的列数
+                    clickToSelect: true,                //是否启用点击选中行
+                    height: 700,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                    uniqueId: "no",                     //每一行的唯一标识，一般为主键列
+                    showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
+                    cardView: false,                    //是否显示详细视图
+                    detailView: false,                   //是否显示父子表
+                    columns: [
+                        {
+                            field: 'UserCard_ID',
+                            title: '卡片编号ID'
+                        }, {
+                            field: 'UserLogin_ID',
+                            title: '用户ID'
+                        }, {
+                            field: 'UserCard_Nickname',
+                            title: '用户昵称'
+                        }, {
+                            field: 'UserCard_GmLevel',
+                            title: '等级权限'
+                        }, {
+                            field: 'UserCard_CreatDt',
+                            title: '创建时间',
+                            //获取日期列的值进行转换
+                            formatter: function (value, row, index) {
+                                return changeDateFormat(value)
+                            }
+                        }, {
+                            field: 'UserCard_Remark',
+                            title: '备注'
+                        }, {
+                            field: 'UserCard_Birthday',
+                            title: '生日',
+                            //获取日期列的值进行转换
+                            formatter: function (value, row, index) {
+                                return changeDateFormat(value)
+                            }
+                        }, {
+                            field: 'UserCard_Sex',
+                            title: '性别'
+                        }, {
+                            field: 'UserCard_MobilPhone',
+                            title: '联系方式'
+                        }, {
+                            field: 'UserCard_ChatHeadImg',
+                            title: '头像地址'
+                        },
+                        {
+                            field: 'operate', title: '操作', formatter: operateFormatter, //自定义方法，添加操作按钮
+                            width: 180,
+                            align:'center'
+                        }
+                    ],
+                    rowStyle: function (row, index) {
+                        var classesArr = ['success', 'info'];
+                        var strclass = '';
+                        if (index % 2 === 0) {//偶数行
+                            strclass = classesArr[0];
+                        } else {//奇数行
+                            strclass = classesArr[1];
+                        }
+                        return { classes: strclass };
+                    },//隔行变色
+                });
+            };
+            //得到查询的参数
+            oTableInit.queryParams = function (params) {
+                var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                    limit: params.limit,   //页面大小
+                    offset: params.offset
+                };
+                return temp;
+            };
+            return oTableInit;
+    };
+        function operateFormatter(value, row, index) {//赋予的参数
+            @*return ['@Html.ActionLink("编辑", "Edit", "_operator", new { id = 1 }, new { @class = "btn btn-default" })',
+                //'<a class="btn active" href="#">' + value.op_code + '</a>',
+                '<a class="btn btn-default" href="#">' + row.op_code + '</a>',
+                '<a class="nav-item nav-link" href="#"><span class="fa fa-edit"></span></a>'
+            ].join('');*@
+            return [
+                '<a class="btn btn-default" href="/_operator/Edit/' + row.UserCard_ID + '"><span class="fas fa-plus-circle" aria-hidden="true"></span></a>|',
+                '<a class="btn btn-default" href="/_operator/Edit/' + row.UserCard_ID +'"><span class="fas fa-edit" aria-hidden="true"></span></a>|',
+                //'@Html.ActionLink("删除", "Edit", "_operator", new { id = 1 }, new { @class = "btn btn-default" })',
+                '<a class="btn btn-default" href="/_operator/Edit/' + row.UserCard_ID + '"><span class="fas fa-trash-alt" aria-hidden="true"></span></a>',
+            ].join('');
+    };
+    //转换日期格式(时间戳转换为datetime格式)
+    function changeDateFormat(cellval) {
+        var dateVal = cellval + "";
+        if (cellval != null) {
+            var date = new Date(parseInt(dateVal.replace("/Date(", "").replace(")/", ""), 10));
+            var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+            var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+
+            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+
+            return date.getFullYear() + "-" + month + "-" + currentDate + " " + hours + ":" + minutes + ":" + seconds;
+        }
+    };
+</script>

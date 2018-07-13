@@ -1,0 +1,176 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutManagementOrdinary.cshtml";
+}
+
+@section Head{
+    <style>
+        a {
+            text-decoration: none;
+            color: white;
+        }
+
+            a:hover, a:active {
+                text-decoration: none;
+                color: white;
+            }
+    </style>
+}
+
+@section Scripts{
+    <script>
+        var Uid = 0;
+        $(document).ready(function () {
+            $.ajax({
+                type: 'POST',
+                url: '/ManagementOrdinary/UserLoginImg',
+                cache: false,
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (i, val) {
+                        //var html = '<option>' + val.Forum_Name + '</option>';
+                        $("#AdminUser").attr("src", val.头像);
+                        $("#AdminUser").attr("alt", val.用户名);
+                        $("#UserAdminName").text(val.用户名);
+                        Uid = '@ViewBag.ID';
+                    });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("加载失败：" + errorThrown);
+                }
+            });
+        });
+        //$("#DBArticleTypeView").click(function () {
+        //    $("#PartialView").empty();//删除元素的子元素
+        //    $("#CurrentPage").empty();
+        //    $("#CurrentPage").append('<a href="#" class="nav-link disabled">文章类别表</a>');
+        //    $("#PartialView").append('<iframe style="width:100%;height:auto;min-height:1200px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="/ArticleType/Index"></iframe>');
+        //    CheckID("ArticleType_Index", "文章类别表", "DBArticleTypeView");
+        //});
+        //$("#DBForumView").click(function () {
+        //    $("#PartialView").empty();//删除元素的子元素
+        //    $("#CurrentPage").empty();
+        //    $("#CurrentPage").append('<a href="#" class="nav-link disabled">数据分类表</a>');
+        //    $("#PartialView").append('<iframe id="contentIframe" style="width:100%;height:auto;min-height:1200px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="/Forum/Index"></iframe>');
+        //    CheckID("Forum_Index", "数据分类表", "DBForumView");
+        //});
+        $('#UserCardEdit').click(function () {
+            $("#PartialView").empty();//删除元素的子元素
+            $("#CurrentPage").empty();
+            $("#CurrentPage").append('<a href="#" class="nav-link disabled">资料修改</a>');
+            $("#PartialView").append('<iframe id="contentIframe" style="width:100%;height:auto;min-height:1200px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="/User_Card/Edit/'+ Uid+'"></iframe>');
+            CheckID("User_Card_Edit", "资料修改", "UserCardEdit");
+        });
+        $("#ArticleADDView").click(function () {
+            $("#PartialView").empty();//删除元素的子元素
+            $("#CurrentPage").empty();
+            $("#CurrentPage").append('<a href="#" class="nav-link disabled">新增文章</a>');
+            $("#PartialView").append('<iframe id="contentIframe" style="width:100%;height:auto;min-height:1200px;" marginwidth="0" marginheight="0"  frameborder="0" src="/ManagementOrdinary/ArticleADD_Ordinary"></iframe>');
+            CheckID("ManagementOrdinary_Index", "新增文章", "ArticleADDView");
+        });
+        $("#DBArticleView").click(function () {
+            $("#PartialView").empty();//删除元素的子元素
+            $("#CurrentPage").empty();
+            $("#CurrentPage").append('<a href="#" class="nav-link disabled">文章管理</a>');
+            $("#PartialView").append('<iframe id="contentIframe" style="width:100%;height:auto;min-height:1200px;" marginwidth="0" marginheight="0"  frameborder="0" src="/ManagementOrdinary/ArticleInfo_Ordinary/' + Uid+'"></iframe>');
+            CheckID("ManagementArticleInfo_Ordinary", "文章管理", "DBArticleView");
+        });
+        $('#UserCardClose').click(function () {
+            $.ajax({
+                url: '/ManagementOrdinary/UserClose',
+                type: 'post',
+                dataType: 'json',
+                success: function (data) {
+                    if (data == 0) {
+                        window.open("/Blogs/Index", "_self");
+                    }
+                    else {
+                        alert("退出失败");
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("加载失败：" + errorThrown);
+                }
+            });
+        });
+        //var FIDLable = null;
+        //移除标签 不知道为啥在导航栏中获取不到-无效
+        $('span[class="fas fa-minus-circle"]').click(function () {
+            alert("准备删除此标签吗");
+            $(this).parent().parent().parent().remove();
+        });
+        //添加标签
+        function CheckID(ID, LableText, FatherID) {
+            if ($('#' + ID).length > 0) {
+               // alert("标签已存在");
+            }
+            else {
+                if ($('li[class="nav-item d-none d-sm-inline-block"]').length < 9) {
+                    var Lable = '<li class="nav-item d-none d-sm-inline-block" style="margin-left:10px" id="Rem' + ID + '">' +
+                        '<h3><span class="badge badge-pill badge-secondary">' +
+                        '<a id="' + ID + '" href="#"> ' + LableText + '</a>' +
+                        '<span class="fas fa-minus-circle">' +
+                        '</span ></h3> ' +
+                        '</li>';
+                    /*
+                     */
+                    $("#ADDORDERLABLE").append(Lable);
+                    //alert(LableText);
+                    LableClike(ID, FatherID);
+                }
+                else {
+                    alert("标签超出限制");
+                }
+                //FIDLable = FatherID;
+            }
+            //alert($('li[class="nav-item d-none d-sm-inline-block"]').length);
+        }
+        function LableClike(ID, FatherID) {
+            $('#' + ID).click(function () {
+                $('#' + FatherID).click();
+            });
+            $('#' + ID).siblings('span').click(function () {
+                //alert("aaaa");
+                //删除标签
+                $('#Rem' + ID).remove();
+            });
+        }
+        //iframe高度自适应
+        /**
+ * iframe自适应高度，height为手动设置的最小高度
+ */
+        function initIframeHeight(height) {
+            var userAgent = navigator.userAgent;
+            var iframe = parent.document.getElementById("contentIframe");
+            var subdoc = iframe.contentDocument || iframe.contentWindow.document;
+            var subbody = subdoc.body;
+            var realHeight;
+            //谷歌浏览器特殊处理
+            if (userAgent.indexOf("Chrome") > -1) {
+                realHeight = subdoc.documentElement.scrollHeight;
+            }
+            else {
+                realHeight = subbody.scrollHeight;
+            }
+            if (realHeight < height) {
+                $(iframe).height(height);
+            }
+            else {
+                $(iframe).height(realHeight);
+            }
+        }
+        function reinitIframe() {
+            var iframe = document.getElementById("contentIframe");
+            try {
+                var bHeight = iframe.contentWindow.document.body.scrollHeight;
+                var dHeight = iframe.contentWindow.document.documentElement.scrollHeight;
+                var height = Math.max(bHeight, dHeight);
+                iframe.height = height;
+                console.log(height);
+            } catch (ex) { }
+        }
+        window.setInterval("reinitIframe()", 200);
+    </script>
+}
+

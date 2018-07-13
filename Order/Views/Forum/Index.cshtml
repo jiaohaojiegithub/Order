@@ -1,0 +1,252 @@
+﻿
+@{
+    ViewBag.Title = "数据分类";
+    Layout = "~/Views/Shared/_LayoutOriginal.cshtml";
+}
+@section Head{
+    <link href="~/bootstrap-table-develop/dist/bootstrap-table.css" rel="stylesheet" />
+}
+<div class="panel-body" style="padding-bottom:0px;">
+    <div class="card">
+        <div class="header bg-secondary text-white"><h4>操作</h4></div>
+        <div class="card-body">
+            <div class="input-group mb-3 hidden">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">数据分类ID</span>
+                </div>
+                <input type="text" class="form-control" placeholder="数据分类ID" id="inputForum_ID" name="inputForum_ID" disabled>
+            </div>
+            <div class="input-group mb-3 hidden">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">数据分类名</span>
+                </div>
+                <input type="text" class="form-control" placeholder="数据分类名" id="inputForum_Text" name="inputForum_Text">
+            </div>
+            <div class="btn-group float-right">
+                <button id="btn_add" type="button" class="btn btn-default">
+                    <span class="fas fa-plus-circle" aria-hidden="true"></span>新增
+                </button>
+                <button id="btn_Edit" type="button" class="btn btn-default">
+                    <span class="fas fa-edit" aria-hidden="true"></span>修改
+                </button>
+            </div>
+        </div>
+        <div class="btn-group" id="toolbar">
+
+            <input type="text" class="form-control btn border-secondary" placeholder="数据分类名" id="inputSearch" name="inputSearch">
+            <input type="button" class="input-group-append btn btn-block border-secondary" id="inputBtnSearch" value="查询" />
+            @*<div class="input-group-addon">
+                <span class="input-group-text input-append">查询</span>
+            </div>*@
+        </div>
+    </div>
+    <table id="table"></table>
+</div>
+
+@section Scripts{
+    <script src="~/bootstrap-table-develop/dist/bootstrap-table.js"></script>
+    <script src="~/bootstrap-table-develop/dist/locale/bootstrap-table-zh-CN.js"></script>
+    <script>
+        $(function () {
+            //1.初始化Table
+            var oTable = new TableInit();
+            oTable.Init();
+        });
+        var TableInit = function () {
+            var oTableInit = new Object();
+            //初始化Table
+            oTableInit.Init = function () {
+                $('#table').bootstrapTable({
+                    url: '/Forum/ForumInfo',
+                    method: 'get',                      //请求方式（*）
+                    toolbar: '#toolbar',                //工具按钮用哪个容器
+                    striped: true,                      //是否显示行间隔色
+                    cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                    pagination: true,                   //是否显示分页（*）
+                    sortable: true,                     //是否启用排序
+                    sortOrder: "asc",                   //排序方式
+                    queryParams: oTableInit.queryParams,//传递参数（*）
+                    sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                    pageNumber: 1,                       //初始化加载第一页，默认第一页
+                    pageSize: 10,                       //每页的记录行数（*）
+                    pageList: [10, 25, 50, 100, 'All'],        //可供选择的每页的行数（*）
+                    search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                    contentType: "application/x-www-form-urlencoded",
+                    strictSearch: true,
+                    showColumns: true,                  //是否显示所有的列
+                    showRefresh: true,                  //是否显示刷新按钮
+                    minimumCountColumns: 2,             //最少允许的列数
+                    clickToSelect: true,                //是否启用点击选中行
+                    height: 800,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                    uniqueId: "no",                     //每一行的唯一标识，一般为主键列
+                    showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
+                    cardView: false,                    //是否显示详细视图
+                    detailView: false,                   //是否显示父子表
+                    // showFullscreen: true, //是否显示全屏按钮。
+                    columns: [
+                        {
+                            field: 'Forum_ID',
+                            title: '数据类别ID'
+                        }, {
+                            field: 'Forum_Name',
+                            title: '数据类别名'
+                        },
+                        {
+                            field: 'operate',
+                            title: '操作',
+                            formatter: operateFormatter, //自定义方法，添加操作按钮
+                            width: 180,
+                            align: 'center',
+                            events: operateEvents
+                        }
+                    ],
+                    rowStyle: function (row, index) {
+                        var classesArr = ['success', 'info'];
+                        var strclass = '';
+                        if (index % 2 === 0) {//偶数行
+                            strclass = classesArr[0];
+                        } else {//奇数行
+                            strclass = classesArr[1];
+                        }
+                        return { classes: strclass };
+                    },//隔行变色
+                });
+            };
+            //得到查询的参数
+            oTableInit.queryParams = function (params) {
+                var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                    limit: params.limit,   //页面大小
+                    offset: params.offset,
+                    Search: $("#inputSearch").val(),
+                    // LableText: $('#Search').val()
+                };
+                return temp;
+            };
+            return oTableInit;
+        };
+        function operateFormatter(value, row, index) {//赋予的参数
+            return [
+                //'<a class="tableAdd"><span class="fas fa-plus-circle" aria-hidden="true"></span></a>|',
+                '<a class="tableEdit"><span class="fas fa-edit" aria-hidden="true"></span></a>|',
+                '<a class="tableDelete"><span class="fas fa-trash-alt" aria-hidden="true"></span></a>',
+            ].join('');
+        };
+        window.operateEvents = {
+            //'click .tableAdd': function (e, value, row, index) {
+            //    alert('You click like action, row: ' + JSON.stringify(row));
+            //},
+            'click .tableDelete': function (e, value, row, index) {
+
+                //alert(row.Lable_ID);
+                $.ajax({
+                    type: 'POST',
+                    url: '/Forum/DeleteConfirmed',
+                    cache: false,
+                    //headers: headers,
+                    data: {
+                        id: row.Forum_ID
+                    },
+                    success: function (data) {
+                        if (data == 0) {
+                            alert("删除成功");
+                            $('#table').bootstrapTable('remove', {
+                                field: 'Forum_ID',
+                                values: [row.Forum_ID]
+                            });
+                        }
+                        else {
+                            alert("删除失败");
+                        }
+                    },
+                    error: function () {
+                        alert("Error");
+                    }
+                });
+            },
+            'click .tableEdit': function (e, value, row, index) {
+                //alert('单击修改: ' + JSON.stringify(row));
+                $("#inputForum_ID").val(row.Forum_ID);
+                $("#inputForum_Text").val(row.Forum_Name);
+                //$("#inputLable_ID").val(row.Lable_ID)
+            }
+        };
+        //转换日期格式(时间戳转换为datetime格式)
+        function changeDateFormat(cellval) {
+            var dateVal = cellval + "";
+            if (cellval != null) {
+                var date = new Date(parseInt(dateVal.replace("/Date(", "").replace(")/", ""), 10));
+                var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+                var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+
+                var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+                var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+                var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+
+                return date.getFullYear() + "-" + month + "-" + currentDate + " " + hours + ":" + minutes + ":" + seconds;
+            }
+        };
+        $("#btn_add").click(function () {
+            $.ajax({
+                type: 'POST',
+                url: '/Forum/CreatForum',
+                cache: false,
+                //headers: headers,
+                data: {
+                    //Forum_ID: $('input[id="inputForum_ID"]').val(),
+                    Forum_Text: $('input[id="inputForum_Text"]').val(),
+                },
+                success: function (data) {
+                    //alert(data);
+                    if (data == 0) {
+                        alert("添加成功");
+                    }
+                    else if (data == 1) {
+                        alert("数据类别不能为空");
+                    }
+                    else if (data == 2) {
+                        alert("数据类别已存在");
+                    }
+                    else {
+                        alert("错误")
+                    }
+                },
+                error: function () {
+                    alert("Error");
+                }
+            })
+        });
+        $("#btn_Edit").click(function () {
+            $.ajax({
+                type: 'POST',
+                url: '/Forum/Edit',
+                cache: false,
+                //headers: headers,
+                data: {
+                    Forum_ID: $('input[id="inputForum_ID"]').val(),
+                    Forum_Text: $('input[id="inputForum_Text"]').val(),
+                },
+                success: function (data) {
+                    //alert(data);
+                    if (data == 0) {
+                        alert("修改成功");
+                    }
+                    else if (data == 1) {
+                        alert("数据类别不能为空");
+                    }
+                    else if (data == 2) {
+                        alert("数据类别已存在");
+                    }
+                    else {
+                        alert("错误")
+                    }
+                },
+                error: function () {
+                    alert("Error");
+                }
+            })
+        });
+        $("#inputBtnSearch").click(function () {
+            $("#table").bootstrapTable('refresh');
+        });
+    </script>
+}
